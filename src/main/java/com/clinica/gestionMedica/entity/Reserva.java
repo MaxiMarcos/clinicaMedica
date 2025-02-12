@@ -23,12 +23,12 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double precioTotal;
+    private Double precioTotal = 0.0;
 
     @Enumerated(EnumType.STRING)
     private ReservaEnum estadoPago = ReservaEnum.PENDIENTE;
     @Enumerated(EnumType.STRING)
-    private PresenciaEnum estadoPresencia = PresenciaEnum.DISPONIBLE;
+    private PresenciaEnum presencia = PresenciaEnum.RESERVADO;
 
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)

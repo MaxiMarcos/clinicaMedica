@@ -30,9 +30,9 @@ public class MedicoService implements IMedicoService {
         nuevoMedico.setTelefono(medico.getTelefono());
         nuevoMedico.setDireccion(medico.getDireccion());
         nuevoMedico.setEmail(medico.getEmail());
-        nuevoMedico.setEspecialidadMedica(medico.getEspecialidadMedica());
         nuevoMedico.setSueldo(medico.getSueldo());
         nuevoMedico.setListaReservas(medico.getListaReservas());
+        nuevoMedico.setEspecializacion(medico.getEspecializacion());
 
         return medicoRepo.save(nuevoMedico);
 

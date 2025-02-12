@@ -1,7 +1,7 @@
 package com.clinica.gestionMedica.entity;
 
-import com.clinica.gestionMedica.enums.PresenciaEnum;
-import com.clinica.gestionMedica.enums.PrestacionEnum;
+import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,9 +23,9 @@ public class Prestacion {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private PrestacionEnum tipo;
+    private PrestacionTiposEnum tipo;
     @Enumerated(EnumType.STRING)
-    private PresenciaEnum estado = PresenciaEnum.DISPONIBLE;
+    private PrestacionEstadoEnum estado = PrestacionEstadoEnum.DISPONIBLE;
     private int codigoPrestacion;
     private String descripcion;
     private double precio;
@@ -33,4 +34,9 @@ public class Prestacion {
     @ManyToOne
     @JoinColumn(name = "reserva_id")
     private Reserva reserva;
+
+    @OneToOne
+    @JoinColumn(name = "medico_id")
+    private Medico medico;
+
 }

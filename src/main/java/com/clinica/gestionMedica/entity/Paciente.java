@@ -1,5 +1,6 @@
 package com.clinica.gestionMedica.entity;
 
+import com.clinica.gestionMedica.security.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

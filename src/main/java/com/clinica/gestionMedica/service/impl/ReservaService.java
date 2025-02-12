@@ -1,7 +1,9 @@
 package com.clinica.gestionMedica.service.impl;
 
+import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
+import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.repository.ReservaRepository;
 import com.clinica.gestionMedica.service.IReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,17 @@ import java.util.List;
 @Service
 public class ReservaService implements IReservaService {
 
-    @Autowired
-    ReservaRepository reservaRepo;
+    private final ReservaRepository reservaRepo;
+
+
+    public ReservaService(ReservaRepository reservaRepo) {
+        this.reservaRepo = reservaRepo;
+    }
 
     @Override
     public Reserva crearReserva(Reserva reserva) {
+
+        //Paciente paciente = pacienteRepo.findByDni(reserva.getPaciente().getDni());
 
         return reservaRepo.save(reserva);
     }
@@ -29,7 +37,8 @@ public class ReservaService implements IReservaService {
         nuevaReserva.setMedico(reserva.getMedico());
         nuevaReserva.setPaciente(reserva.getPaciente());
         nuevaReserva.setPrecioTotal(reserva.getPrecioTotal());
-        nuevaReserva.setEstadoPresencia(reserva.getEstadoPresencia());
+        nuevaReserva.setPresencia(reserva.getPresencia());
+        nuevaReserva.setPrestaciones(reserva.getPrestaciones());
 
         return reservaRepo.save(nuevaReserva);
     }

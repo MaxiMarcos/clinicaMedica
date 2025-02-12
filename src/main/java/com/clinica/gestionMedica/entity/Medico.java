@@ -1,8 +1,7 @@
 package com.clinica.gestionMedica.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrimaryKeyJoinColumn;
+import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,9 +19,14 @@ import java.util.List;
 @PrimaryKeyJoinColumn(referencedColumnName="id")
 public class Medico extends Persona{
 
-    private String especialidadMedica;
     //private Map<LocalDate, List<LocalTime>> turnosDisponibles;
+    @Enumerated(EnumType.STRING)
+    private PrestacionTiposEnum especializacion;
     private Double sueldo;
+
+    //@OneToOne
+   // @JoinColumn(name = "prestacion_id")
+   // private Prestacion prestacion;
 
     @OneToMany(mappedBy = "medico")
     private List<Reserva> listaReservas;

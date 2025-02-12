@@ -1,6 +1,6 @@
 package com.clinica.gestionMedica.enums;
 
-public enum PrestacionEnum {
+public enum PrestacionTiposEnum {
     CONSULTA_GENERAL,
     CONSULTA_CARDIOLOGIA,
     CONSULTA_DERMATOLOGIA,
