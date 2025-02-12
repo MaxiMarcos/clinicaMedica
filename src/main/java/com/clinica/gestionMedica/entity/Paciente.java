@@ -20,5 +20,5 @@ import java.util.List;
 public class Paciente extends Persona {
 
     @OneToMany(mappedBy = "paciente")
-    private List<Reserva> listaReserva;
+    private List<Reserva> listaReservas;
 }

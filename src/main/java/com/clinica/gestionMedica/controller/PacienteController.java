@@ -61,4 +61,15 @@ public class PacienteController {
         return ResponseEntity.status(HttpStatus.OK).body("Paciente eliminado correctamente con el ID: " + id);
     }
 
+    @PutMapping("/editar")
+    public ResponseEntity<?> editarPaciente(@PathVariable Long id, @RequestBody Paciente paciente){
+
+        Paciente nuevoPaciente = pacienteService.editarPaciente(id, paciente);
+        if(nuevoPaciente != null){
+            return ResponseEntity.status(HttpStatus.OK).body("Paciente editado exitosamente " + nuevoPaciente);
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró al paciente con ID: " + id);
+        }
+    }
+
 }

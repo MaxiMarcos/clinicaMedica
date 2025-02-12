@@ -29,7 +29,7 @@ public class MedicoController {
         }
     }
 
-    @GetMapping("/traer")
+    @GetMapping("/traer/{id}")
     public ResponseEntity<?> traerMedico(@PathVariable Long id){
 
         Medico medico = medicoService.traerMedico(id);
@@ -47,6 +47,17 @@ public class MedicoController {
             return ResponseEntity.status(HttpStatus.OK).body("Se obtuvieron exitosamente los siguientes médicos: " + medicos);
         }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontraron médicos ");
+        }
+    }
+
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<?> editarMedico(@PathVariable Long id, @RequestBody Medico medico){
+        Medico nuevoMedico = medicoService.editarMedico(id, medico);
+
+        if(nuevoMedico != null){
+            return ResponseEntity.status(HttpStatus.OK).body("Médico modificado exitosamente" + nuevoMedico);
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró médico con el ID: "+ id);
         }
     }
 

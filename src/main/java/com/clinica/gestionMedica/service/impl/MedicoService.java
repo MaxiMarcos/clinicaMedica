@@ -21,8 +21,21 @@ public class MedicoService implements IMedicoService {
     }
 
     @Override
-    public Medico editarMedico(Long id, Paciente paciente) {
-        return null;
+    public Medico editarMedico(Long id, Medico medico) {
+        Medico nuevoMedico = this.traerMedico(id);
+        nuevoMedico.setApellido(medico.getApellido());
+        nuevoMedico.setNombre(medico.getNombre());
+        nuevoMedico.setFecha_nacimiento(medico.getFecha_nacimiento());
+        nuevoMedico.setDni(medico.getDni());
+        nuevoMedico.setTelefono(medico.getTelefono());
+        nuevoMedico.setDireccion(medico.getDireccion());
+        nuevoMedico.setEmail(medico.getEmail());
+        nuevoMedico.setEspecialidadMedica(medico.getEspecialidadMedica());
+        nuevoMedico.setSueldo(medico.getSueldo());
+        nuevoMedico.setListaReservas(medico.getListaReservas());
+
+        return medicoRepo.save(nuevoMedico);
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.clinica.gestionMedica.service.impl;
 
+import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.service.IPacienteService;
@@ -21,7 +22,18 @@ public class PacienteService implements IPacienteService {
 
     @Override
     public Paciente editarPaciente(Long id, Paciente paciente) {
-        return null;
+
+        Paciente nuevoPaciente = this.traerPaciente(id);
+        nuevoPaciente.setApellido(paciente.getApellido());
+        nuevoPaciente.setNombre(paciente.getNombre());
+        nuevoPaciente.setFecha_nacimiento(paciente.getFecha_nacimiento());
+        nuevoPaciente.setDni(paciente.getDni());
+        nuevoPaciente.setTelefono(paciente.getTelefono());
+        nuevoPaciente.setDireccion(paciente.getDireccion());
+        nuevoPaciente.setEmail(paciente.getEmail());
+        nuevoPaciente.setListaReservas(paciente.getListaReservas());
+
+        return pacienteRepo.save(nuevoPaciente);
     }
 
     @Override

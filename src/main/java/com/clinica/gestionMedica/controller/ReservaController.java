@@ -1,5 +1,6 @@
 package com.clinica.gestionMedica.controller;
 
+import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
 import com.clinica.gestionMedica.service.impl.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,16 @@ public class ReservaController {
             return ResponseEntity.status(HttpStatus.OK).body("Se eliminó exitosamente a la reserva con ID: "+ id);
         }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró a la reserva con ID: "+ id);
+        }
+    }
+
+    @PutMapping("/editar")
+    public ResponseEntity<?> editarReserva(@PathVariable Long id,@RequestBody Reserva reserva){
+        Reserva nuevaReserva = reservaService.editarReserva(id, reserva);
+        if(nuevaReserva != null){
+            return ResponseEntity.status(HttpStatus.OK).body("Reserva modificadda exitosamente "+ nuevaReserva);
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró la reserva con ID: "+ id);
         }
     }
 }

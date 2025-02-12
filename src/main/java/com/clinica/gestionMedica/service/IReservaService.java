@@ -1,6 +1,7 @@
 package com.clinica.gestionMedica.service;
 
 
+import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
 
 import java.util.List;

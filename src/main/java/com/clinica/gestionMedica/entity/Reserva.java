@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,9 +26,9 @@ public class Reserva {
     private Double precioTotal;
 
     @Enumerated(EnumType.STRING)
-    private ReservaEnum estadoPago;
+    private ReservaEnum estadoPago = ReservaEnum.PENDIENTE;
     @Enumerated(EnumType.STRING)
-    private PresenciaEnum estadoPresencia;
+    private PresenciaEnum estadoPresencia = PresenciaEnum.DISPONIBLE;
 
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
@@ -35,4 +37,7 @@ public class Reserva {
     @ManyToOne
     @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
+
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Prestacion> prestaciones;
 }

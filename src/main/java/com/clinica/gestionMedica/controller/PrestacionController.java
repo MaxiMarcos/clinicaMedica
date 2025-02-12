@@ -63,4 +63,14 @@ public class PrestacionController {
         return ResponseEntity.status(HttpStatus.OK).body("Prestaciónes obtenidas correctamente: " + prestaciones);
     }
 
+    @PutMapping("/editar")
+    public ResponseEntity<?> editarPrestacion(Long id, Prestacion prestacion){
+        Prestacion nuevaPrestacion = prestacionService.editarPrestacion(id, prestacion);
+        if(nuevaPrestacion != null){
+          return ResponseEntity.status(HttpStatus.OK).body("Prestación modificada correctamente " + nuevaPrestacion);
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró la prestación con ID: " + id);
+        }
+    }
+
 }
