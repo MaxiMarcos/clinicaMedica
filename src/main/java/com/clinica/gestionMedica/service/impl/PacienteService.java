@@ -1,7 +1,10 @@
 package com.clinica.gestionMedica.service.impl;
 
-import com.clinica.gestionMedica.entity.Medico;
+import com.clinica.gestionMedica.dto.PacienteDto;
+import com.clinica.gestionMedica.dto.ReservaPacienteDto;
 import com.clinica.gestionMedica.entity.Paciente;
+import com.clinica.gestionMedica.entity.Reserva;
+import com.clinica.gestionMedica.mapper.ReservaMapper;
 import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.service.IPacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,8 @@ public class PacienteService implements IPacienteService {
 
     @Autowired
     PacienteRepository pacienteRepo;
+    @Autowired
+    ReservaMapper reservaMapper;
 
     @Override
     public Paciente crearPaciente(Paciente paciente) {
@@ -51,4 +56,23 @@ public class PacienteService implements IPacienteService {
 
         pacienteRepo.deleteById(id);
     }
+
+    @Override
+    public PacienteDto traerHistorial(String dni) {
+        Paciente paciente = pacienteRepo.findByDni(dni);
+        List<Reserva> reservas = paciente.getListaReservas();
+
+        PacienteDto pacienteDto = new PacienteDto();
+        pacienteDto.setHistorial(reservaMapper.ListaHistorialDto(reservas));
+        pacienteDto.setNombre(paciente.getNombre());
+        pacienteDto.setDni(paciente.getDni());
+        pacienteDto.setApellido(paciente.getApellido());
+        pacienteDto.setEmail(paciente.getEmail());
+        pacienteDto.setTelefono(paciente.getTelefono());
+
+        return pacienteDto;
+    }
+
+
+
 }

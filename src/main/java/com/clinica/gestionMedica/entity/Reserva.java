@@ -1,15 +1,11 @@
 package com.clinica.gestionMedica.entity;
 
 import com.clinica.gestionMedica.enums.PresenciaEnum;
-import com.clinica.gestionMedica.enums.ReservaEnum;
+import com.clinica.gestionMedica.enums.ReservaEstadoEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class Reserva {
 
     @Id
@@ -26,17 +23,17 @@ public class Reserva {
     private Double precioTotal = 0.0;
 
     @Enumerated(EnumType.STRING)
-    private ReservaEnum estadoPago = ReservaEnum.PENDIENTE;
+    private ReservaEstadoEnum estadoPago = ReservaEstadoEnum.PENDIENTE;
     @Enumerated(EnumType.STRING)
-    private PresenciaEnum presencia = PresenciaEnum.RESERVADO;
+    private PresenciaEnum estadoPresencia = PresenciaEnum.RESERVADO;
 
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
 
-    @ManyToOne
-    @JoinColumn(name = "medico_id", nullable = false)
-    private Medico medico;
+    //@ManyToOne
+   // @JoinColumn(name = "medico_id") Médico ya está asociado en Prestación, la cual se relaciona con Reserva
+    //private Medico medico;
 
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Prestacion> prestaciones;

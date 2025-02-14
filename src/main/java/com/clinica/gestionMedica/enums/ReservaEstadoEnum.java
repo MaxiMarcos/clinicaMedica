@@ -1,9 +1,8 @@
 package com.clinica.gestionMedica.enums;
 
-public enum ReservaEnum {
+public enum ReservaEstadoEnum {
 
     PENDIENTE,
-    RESERVADO,
     PAGADO,
     CANCELADO
 }

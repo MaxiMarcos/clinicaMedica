@@ -35,7 +35,7 @@ public class Prestacion {
     @JoinColumn(name = "reserva_id")
     private Reserva reserva;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "medico_id")
     private Medico medico;
 

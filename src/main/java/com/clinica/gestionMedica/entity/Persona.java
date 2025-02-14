@@ -23,6 +23,7 @@ public class Persona {
     private String apellido;
     private String nombre;
     private LocalDate fecha_nacimiento;
+    @Column(unique = true, nullable = false)
     private String dni;
     private String telefono;
     private String direccion;

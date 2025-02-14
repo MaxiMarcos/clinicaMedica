@@ -2,6 +2,7 @@ package com.clinica.gestionMedica.service.impl;
 
 import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
+import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import com.clinica.gestionMedica.repository.MedicoRepository;
 import com.clinica.gestionMedica.service.IMedicoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,6 @@ public class MedicoService implements IMedicoService {
         nuevoMedico.setDireccion(medico.getDireccion());
         nuevoMedico.setEmail(medico.getEmail());
         nuevoMedico.setSueldo(medico.getSueldo());
-        nuevoMedico.setListaReservas(medico.getListaReservas());
         nuevoMedico.setEspecializacion(medico.getEspecializacion());
 
         return medicoRepo.save(nuevoMedico);
@@ -51,5 +51,10 @@ public class MedicoService implements IMedicoService {
     @Override
     public void eliminarMedico(Long id) {
         medicoRepo.deleteById(id);
+    }
+
+    @Override
+    public List<Medico> buscarPorEspecialidad(PrestacionTiposEnum especialidad) {
+        return medicoRepo.findByEspecializacion(especialidad);
     }
 }

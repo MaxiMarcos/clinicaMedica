@@ -16,22 +16,34 @@ public class PrestacionService implements IPrestacionService {
     @Autowired
     PrestacionRepository prestacionRepo;
     @Autowired
-    MedicoRepository medicoRepo;
+    MedicoService medicoService;
 
     @Override
     public Prestacion crearPrestacion(Prestacion prestacion) {
 
-        Medico medico = prestacion.getMedico();
-        Medico m = medicoRepo.findById(medico.getId()).orElse(null);
-
-        if(m.getEspecializacion() == prestacion.getTipo()){
-            System.out.println("SI coincide la especialización");
-            prestacionRepo.save(prestacion);
-        }else {
-            System.out.println("no coincide la especialización");
+        // recibo los médicos filtrando de acuerdo al servicio que necesito
+        List<Medico> medicos = medicoService.buscarPorEspecialidad(prestacion.getTipo());
+        if (medicos.isEmpty()) {
+            throw new RuntimeException("No hay médicos disponibles para la especialización: " + prestacion.getTipo());
+        }
+        for (Medico medico : medicos) {
+            System.out.println("Medicos filtrados por especializacion: " + medico.getApellido());
         }
 
-        return prestacion;
+        Medico medicoSeleccionado = prestacion.getMedico();
+
+        // Validamos si el médico pertenece a la especialización correcta
+        boolean coincide = medicos.stream()
+                .anyMatch(m -> m.getId().equals(medicoSeleccionado.getId()));
+
+        if (coincide) {
+            return prestacionRepo.save(prestacion);
+        } else {
+            // Si no coincide, asignamos el primer médico disponible de la lista
+            System.out.println("El médico elegido no atiende esta especialidad, se asignará uno que si: ");
+            prestacion.setMedico(medicos.get(0));
+            return prestacionRepo.save(prestacion);
+        }
     }
 
     @Override

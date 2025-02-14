@@ -24,10 +24,7 @@ public class Medico extends Persona{
     private PrestacionTiposEnum especializacion;
     private Double sueldo;
 
-    //@OneToOne
-   // @JoinColumn(name = "prestacion_id")
-   // private Prestacion prestacion;
 
-    @OneToMany(mappedBy = "medico")
-    private List<Reserva> listaReservas;
+   // @OneToMany(mappedBy = "medico")
+   // private List<Reserva> listaReservas;
 }

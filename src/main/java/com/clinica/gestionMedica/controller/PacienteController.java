@@ -1,5 +1,7 @@
 package com.clinica.gestionMedica.controller;
 
+import com.clinica.gestionMedica.dto.PacienteDto;
+import com.clinica.gestionMedica.dto.ReservaPacienteDto;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.service.impl.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ public class PacienteController {
 
     @Autowired
     PacienteService pacienteService;
+
 
     @PostMapping("/crear")
     public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente){
@@ -36,6 +39,18 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.OK).body(paciente);
         }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer Paciente con id: " + id);
+        }
+    }
+
+    @GetMapping("/historial/{dni}")
+    public ResponseEntity<?> historialPaciente(@PathVariable String dni){
+
+        PacienteDto historial = pacienteService.traerHistorial(dni);
+
+        if(historial != null){
+            return ResponseEntity.status(HttpStatus.OK).body(historial);
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer historial del Paciente con dni: " + dni);
         }
     }
 
