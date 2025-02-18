@@ -85,12 +85,13 @@ public class PrestacionService implements IPrestacionService {
 
     @Override
     public List<Prestacion> traerPrestaciones() {
-        return List.of();
+        return prestacionRepo.findAll();
     }
 
 
     @Override
     public void eliminarPrestacion(Long id) {
 
+        prestacionRepo.deleteById(id);
     }
 }

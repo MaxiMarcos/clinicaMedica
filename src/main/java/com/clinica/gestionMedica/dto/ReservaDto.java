@@ -17,7 +17,6 @@ public class ReservaDto {
     private Double precioTotal = 0.0;
     private ReservaEstadoEnum estadoPago = ReservaEstadoEnum.PENDIENTE;
     private PresenciaEnum estadoPresencia = PresenciaEnum.RESERVADO;
-    //private PacienteDto pacienteDto;
     private List<PrestacionDto> prestaciones;
 }
 

@@ -29,6 +29,7 @@ public class ReservaController {
         }
     }
 
+    // proceso de obtener/comprar turno
     @PostMapping("/{pacienteId}/{prestacionId}")
     public ResponseEntity<?> agregarPrestacionEnReserva( @PathVariable Long pacienteId,
                                                          @PathVariable Long prestacionId){
@@ -41,7 +42,7 @@ public class ReservaController {
         }
     }
 
-    @GetMapping("/traer{id}")
+    @GetMapping("/traer/{id}")
     public ResponseEntity<?> traerReserva(@PathVariable Long id){
         Reserva reserva = reservaService.traerReserva(id);
 
@@ -52,28 +53,7 @@ public class ReservaController {
         }
     }
 
-    @GetMapping("/traerTodo")
-    public ResponseEntity<?> traerReservas(){
-        List<Reserva> reservas = reservaService.traerReservas();
-        if(reservas != null){
-            return ResponseEntity.status(HttpStatus.OK).body("Se obtuvieron las siguientes reservas: "+ reservas);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontraron reservas");
-        }
-    }
-
-    @DeleteMapping("/eliminar")
-    public ResponseEntity<?> eliminarReserva(Long id){
-        Reserva reserva = reservaService.traerReserva(id);
-        if (reserva != null){
-            reservaService.eliminarReserva(reserva.getId());
-            return ResponseEntity.status(HttpStatus.OK).body("Se eliminó exitosamente a la reserva con ID: "+ id);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró a la reserva con ID: "+ id);
-        }
-    }
-
-    @PutMapping("/editar")
+    @PutMapping("/editar/{id}")
     public ResponseEntity<?> editarReserva(@PathVariable Long id,@RequestBody Reserva reserva){
         Reserva nuevaReserva = reservaService.editarReserva(id, reserva);
         if(nuevaReserva != null){

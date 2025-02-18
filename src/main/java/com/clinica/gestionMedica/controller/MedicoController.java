@@ -40,16 +40,6 @@ public class MedicoController {
         }
     }
 
-    @GetMapping("/traertodo")
-    public ResponseEntity<?> traerMedicos(){
-        List<Medico> medicos = medicoService.traerMedicos();
-        if (medicos != null){
-            return ResponseEntity.status(HttpStatus.OK).body("Se obtuvieron exitosamente los siguientes médicos: " + medicos);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontraron médicos ");
-        }
-    }
-
     @PutMapping("/editar/{id}")
     public ResponseEntity<?> editarMedico(@PathVariable Long id, @RequestBody Medico medico){
         Medico nuevoMedico = medicoService.editarMedico(id, medico);
@@ -61,15 +51,4 @@ public class MedicoController {
         }
     }
 
-    @DeleteMapping("/eliminar")
-    public ResponseEntity<?> eliminarMedico(@PathVariable Long id){
-
-        Medico medico = medicoService.traerMedico(id);
-        if(medico != null){
-            medicoService.eliminarMedico(medico.getId());
-            return ResponseEntity.status(HttpStatus.OK).body("Se eliminó correctamente al médico con ID: "+ id);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró al médico con ID: "+ id);
-        }
-    }
 }

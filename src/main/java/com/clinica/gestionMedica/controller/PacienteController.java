@@ -31,7 +31,7 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/traer{id}")
+    @GetMapping("/traer/{id}")
     public ResponseEntity<?> traerPaciente(@PathVariable Long id){
 
         Paciente paciente = pacienteService.traerPaciente(id);
@@ -54,29 +54,8 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/traerTodo")
-    public ResponseEntity<?> traerPacientes(){
 
-        List<Paciente> pacientes = pacienteService.traerPacientes();
-        if(pacientes != null){
-            return ResponseEntity.status(HttpStatus.OK).body(pacientes);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer pacientes ");
-        }
-    }
-
-    @DeleteMapping("/eliminar")
-    public ResponseEntity<?> eliminarPaciente(@PathVariable Long id){
-
-        Paciente paciente = pacienteService.traerPaciente(id);
-        if (paciente == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente no encontrado con el ID: " + id);
-        }
-        pacienteService.eliminarPaciente(paciente.getId());
-        return ResponseEntity.status(HttpStatus.OK).body("Paciente eliminado correctamente con el ID: " + id);
-    }
-
-    @PutMapping("/editar")
+    @PutMapping("/editar/{id}")
     public ResponseEntity<?> editarPaciente(@PathVariable Long id, @RequestBody Paciente paciente){
 
         Paciente nuevoPaciente = pacienteService.editarPaciente(id, paciente);

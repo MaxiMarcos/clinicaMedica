@@ -17,17 +17,6 @@ import java.util.stream.Collectors;
 @Component
 public class ReservaMapper {
 
-    public PacienteDto conversionAPacienteDto(Paciente paciente){
-
-        return PacienteDto.builder()
-                .dni(paciente.getDni())
-                .email(paciente.getEmail())
-                .nombre(paciente.getNombre())
-                .apellido(paciente.getApellido())
-                .telefono(paciente.getTelefono())
-                .build();
-    }
-
     public MedicoDto conversionMedicoADto(Medico medico) {
         return new MedicoDto(medico.getNombre(), medico.getApellido());
     }

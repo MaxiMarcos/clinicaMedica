@@ -16,19 +16,6 @@ public class PrestacionController {
     @Autowired
     PrestacionService prestacionService;
 
-
-    @PostMapping("/crear")
-    public ResponseEntity<?> crearPrestacionAdmin(@RequestBody Prestacion prestacion) {
-
-        Prestacion nuevaPrestacion = prestacionService.crearPrestacionAdmin(prestacion);
-
-        if (nuevaPrestacion != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPrestacion);
-        } else {
-            return ResponseEntity.badRequest().body("Error al crear la prestación. Verifique los datos enviados.");
-        }
-    }
-
     @PostMapping("/sacar-turno")
     public ResponseEntity<?> crearPrestacionCliente(@RequestBody Prestacion prestacion) {
 
@@ -39,18 +26,6 @@ public class PrestacionController {
         } else {
             return ResponseEntity.badRequest().body("Error al crear la prestación. Verifique los datos enviados.");
         }
-    }
-
-    @DeleteMapping("/eliminar")
-    public ResponseEntity<String> eliminarPrestacion(@PathVariable Long id) {
-        Prestacion prestacion = prestacionService.traerPrestacion(id);
-
-        if (prestacion == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prestación no encontrada con el ID: " + id);
-        }
-
-        prestacionService.eliminarPrestacion(prestacion.getId());
-        return ResponseEntity.status(HttpStatus.OK).body("Prestación eliminada correctamente con el ID: " + id);
     }
 
     @GetMapping("traer/{id}")
@@ -65,19 +40,7 @@ public class PrestacionController {
         return ResponseEntity.status(HttpStatus.OK).body("Prestación obtenida correctamente: " + prestacion);
     }
 
-    @GetMapping("traerTodo")
-    public ResponseEntity<String> traerPrestaciones(){
-
-        List<Prestacion> prestaciones = prestacionService.traerPrestaciones();
-
-        if (prestaciones == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prestaciónes no encontradas");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body("Prestaciónes obtenidas correctamente: " + prestaciones);
-    }
-
-    @PutMapping("/editar")
+    @PutMapping("/editar/{id}")
     public ResponseEntity<?> editarPrestacion(Long id, Prestacion prestacion){
         Prestacion nuevaPrestacion = prestacionService.editarPrestacion(id, prestacion);
         if(nuevaPrestacion != null){

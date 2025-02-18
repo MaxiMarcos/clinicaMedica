@@ -37,6 +37,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/paciente/historial/**").authenticated()
+                        .requestMatchers("/paciente-admin/**").hasRole("ADMIN")
+                        .requestMatchers("/prestacion-admin/**").hasRole("ADMIN")
+                        .requestMatchers("/reserva-admin/**").hasRole("ADMIN")
+                        .requestMatchers("/medico-admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
