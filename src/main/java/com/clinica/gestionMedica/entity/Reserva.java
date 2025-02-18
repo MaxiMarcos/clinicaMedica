@@ -25,7 +25,7 @@ public class Reserva {
     @Enumerated(EnumType.STRING)
     private ReservaEstadoEnum estadoPago = ReservaEstadoEnum.PENDIENTE;
     @Enumerated(EnumType.STRING)
-    private PresenciaEnum estadoPresencia = PresenciaEnum.RESERVADO;
+    private PresenciaEnum estadoPresencia = PresenciaEnum.RESERVADO; // deberia ir en prestacion
 
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)

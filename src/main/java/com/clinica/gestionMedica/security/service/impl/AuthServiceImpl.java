@@ -51,8 +51,13 @@ public class AuthServiceImpl implements IAuthService {
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(roleName)
-                .paciente(pacienteRepo.findByEmail(registerRequest.getEmail())) // se asocia con un paciente si existe el mail, sino queda null ya que un usuario puede no ser paciente
+                .paciente(pacienteRepo.findByEmail(registerRequest.getEmail())) // se asocia con un paciente si es que existe el mail, sino queda null ya que un usuario puede no ser paciente
                 .build();
+
+        Paciente paciente = user.getPaciente();
+        if (paciente == null) {
+            throw new IllegalStateException("El usuario no tiene un paciente asociado con el email: " + registerRequest.getEmail());
+        }
 
         var savedUser = authRepo.save(user);
         var jwtToken = jwtService.generateToken(savedUser);

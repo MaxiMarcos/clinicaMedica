@@ -1,5 +1,6 @@
 package com.clinica.gestionMedica.controller;
 
+import com.clinica.gestionMedica.dto.ReservaDto;
 import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
 import com.clinica.gestionMedica.service.impl.ReservaService;
@@ -28,7 +29,19 @@ public class ReservaController {
         }
     }
 
-    @GetMapping("/traer")
+    @PostMapping("/{pacienteId}/{prestacionId}")
+    public ResponseEntity<?> agregarPrestacionEnReserva( @PathVariable Long pacienteId,
+                                                         @PathVariable Long prestacionId){
+
+        ReservaDto reservaDto = reservaService.agregarPrestacionEnReserva(pacienteId, prestacionId);
+        if(reservaDto != null){
+            return ResponseEntity.status(HttpStatus.CREATED).body(reservaDto);
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear la Reserva");
+        }
+    }
+
+    @GetMapping("/traer{id}")
     public ResponseEntity<?> traerReserva(@PathVariable Long id){
         Reserva reserva = reservaService.traerReserva(id);
 

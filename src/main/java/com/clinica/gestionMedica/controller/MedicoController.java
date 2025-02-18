@@ -40,7 +40,7 @@ public class MedicoController {
         }
     }
 
-    @GetMapping("/traerTodo")
+    @GetMapping("/traertodo")
     public ResponseEntity<?> traerMedicos(){
         List<Medico> medicos = medicoService.traerMedicos();
         if (medicos != null){

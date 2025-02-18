@@ -16,8 +16,21 @@ public class PrestacionController {
     @Autowired
     PrestacionService prestacionService;
 
+
     @PostMapping("/crear")
-    public ResponseEntity<?> crearPrestacion(@RequestBody Prestacion prestacion) {
+    public ResponseEntity<?> crearPrestacionAdmin(@RequestBody Prestacion prestacion) {
+
+        Prestacion nuevaPrestacion = prestacionService.crearPrestacionAdmin(prestacion);
+
+        if (nuevaPrestacion != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPrestacion);
+        } else {
+            return ResponseEntity.badRequest().body("Error al crear la prestación. Verifique los datos enviados.");
+        }
+    }
+
+    @PostMapping("/sacar-turno")
+    public ResponseEntity<?> crearPrestacionCliente(@RequestBody Prestacion prestacion) {
 
         Prestacion nuevaPrestacion = prestacionService.crearPrestacion(prestacion);
 
@@ -40,7 +53,7 @@ public class PrestacionController {
         return ResponseEntity.status(HttpStatus.OK).body("Prestación eliminada correctamente con el ID: " + id);
     }
 
-    @GetMapping("traer")
+    @GetMapping("traer/{id}")
     public ResponseEntity<String> traerPrestacion(@PathVariable Long id){
 
         Prestacion prestacion = prestacionService.traerPrestacion(id);

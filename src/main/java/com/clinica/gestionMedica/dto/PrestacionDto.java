@@ -19,5 +19,5 @@ public class PrestacionDto {
     private PrestacionTiposEnum tipo;
     private PrestacionEstadoEnum estado;
     private LocalDateTime fechaConsulta;
-    private Medico medico;
+    private MedicoDto medicoDto;
 }

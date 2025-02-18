@@ -9,12 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PacienteDto {
+public class MedicoDto {
 
     private String apellido;
     private String nombre;
-    private String dni;
-    private String telefono;
-    private String email;
-    private List<ReservaDto> historial;
 }

@@ -1,10 +1,7 @@
 package com.clinica.gestionMedica.dto;
 
-import com.clinica.gestionMedica.entity.Paciente;
-import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.enums.PresenciaEnum;
 import com.clinica.gestionMedica.enums.ReservaEstadoEnum;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -14,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReservaPacienteDto {
+public class ReservaDto {
 
 
     private Double precioTotal = 0.0;

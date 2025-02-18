@@ -1,12 +1,12 @@
 package com.clinica.gestionMedica.controller;
 
 import com.clinica.gestionMedica.dto.PacienteDto;
-import com.clinica.gestionMedica.dto.ReservaPacienteDto;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.service.impl.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/traer")
+    @GetMapping("/traer{id}")
     public ResponseEntity<?> traerPaciente(@PathVariable Long id){
 
         Paciente paciente = pacienteService.traerPaciente(id);
@@ -42,15 +42,15 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/historial/{dni}")
-    public ResponseEntity<?> historialPaciente(@PathVariable String dni){
+    @GetMapping("/historial/{id}") // probablemente deba modificar para poder usar #id == authentication.principal.id"
+    public ResponseEntity<?> historialPaciente(@PathVariable Long id){
 
-        PacienteDto historial = pacienteService.traerHistorial(dni);
+        PacienteDto historial = pacienteService.traerHistorial(id);
 
         if(historial != null){
             return ResponseEntity.status(HttpStatus.OK).body(historial);
         }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer historial del Paciente con dni: " + dni);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer historial del Paciente con id: " + id);
         }
     }
 

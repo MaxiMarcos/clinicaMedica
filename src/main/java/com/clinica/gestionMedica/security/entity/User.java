@@ -21,8 +21,9 @@ public class User {
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
-    private RoleName role;
+    private RoleName role = RoleName.CUSTOMER;
 
+    // deberia cambiarse a onetoone probablemente
     @ManyToOne
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;

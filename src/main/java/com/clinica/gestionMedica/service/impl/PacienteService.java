@@ -1,8 +1,9 @@
 package com.clinica.gestionMedica.service.impl;
 
 import com.clinica.gestionMedica.dto.PacienteDto;
-import com.clinica.gestionMedica.dto.ReservaPacienteDto;
+import com.clinica.gestionMedica.dto.PrestacionDto;
 import com.clinica.gestionMedica.entity.Paciente;
+import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
 import com.clinica.gestionMedica.mapper.ReservaMapper;
 import com.clinica.gestionMedica.repository.PacienteRepository;
@@ -10,6 +11,7 @@ import com.clinica.gestionMedica.service.IPacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -58,8 +60,8 @@ public class PacienteService implements IPacienteService {
     }
 
     @Override
-    public PacienteDto traerHistorial(String dni) {
-        Paciente paciente = pacienteRepo.findByDni(dni);
+    public PacienteDto traerHistorial(Long id) {
+        Paciente paciente = pacienteRepo.findById(id).orElse(null);
         List<Reserva> reservas = paciente.getListaReservas();
 
         PacienteDto pacienteDto = new PacienteDto();

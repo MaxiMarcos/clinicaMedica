@@ -1,9 +1,12 @@
 package com.clinica.gestionMedica.mapper;
 
+import com.clinica.gestionMedica.dto.MedicoDto;
 import com.clinica.gestionMedica.dto.PacienteDto;
 import com.clinica.gestionMedica.dto.PrestacionDto;
-import com.clinica.gestionMedica.dto.ReservaPacienteDto;
+import com.clinica.gestionMedica.dto.ReservaDto;
+import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
+import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
 import org.springframework.stereotype.Component;
 
@@ -25,13 +28,18 @@ public class ReservaMapper {
                 .build();
     }
 
-    public ReservaPacienteDto conversionADto(Reserva reserva){
+    public MedicoDto conversionMedicoADto(Medico medico) {
+        return new MedicoDto(medico.getNombre(), medico.getApellido());
+    }
+
+    public ReservaDto conversionADto(Reserva reserva){
+
 
         List<PrestacionDto> prestacionesDto = reserva.getPrestaciones().stream()
-                .map(prestacion -> new PrestacionDto(prestacion.getTipo(), prestacion.getEstado(),  prestacion.getFechaConsulta(), prestacion.getMedico()))
+                .map(prestacion -> new PrestacionDto(prestacion.getTipo(), prestacion.getEstado(),  prestacion.getFechaConsulta(), conversionMedicoADto(prestacion.getMedico())))
                 .collect(Collectors.toList());
 
-        return ReservaPacienteDto.builder()
+        return ReservaDto.builder()
                 .estadoPresencia(reserva.getEstadoPresencia())
                 .estadoPago(reserva.getEstadoPago())
                 .precioTotal(reserva.getPrecioTotal())
@@ -41,9 +49,9 @@ public class ReservaMapper {
 
 
 
-    public List<ReservaPacienteDto> ListaHistorialDto(List<Reserva> reservas){
+    public List<ReservaDto> ListaHistorialDto(List<Reserva> reservas){
 
-        List<ReservaPacienteDto> reservaDto = new ArrayList<>();
+        List<ReservaDto> reservaDto = new ArrayList<>();
         for(Reserva r : reservas){
             reservaDto.add(conversionADto(r));
         }

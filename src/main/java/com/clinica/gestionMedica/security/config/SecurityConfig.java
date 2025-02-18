@@ -28,13 +28,16 @@ public class SecurityConfig {
     }
 
 
+    // DIVIDIR CONTROLLERS EN CLIENTE Y ADMIN PARA LLAMAR MAS ORDENADAMENTE EN SECURITYFILTERCHAIN
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()  // 🔹 PERMITIR REGISTRO SIN AUTENTICACIÓN
-                        .anyRequest().authenticated()
+                        .requestMatchers("/paciente/historial/**").authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
