@@ -16,5 +16,5 @@ public interface PrestacionRepository extends JpaRepository<Prestacion, Long> {
 
     Prestacion findByTipoAndFechaConsultaAndEstadoAndMedico(PrestacionTiposEnum tipo, LocalDateTime fecha, PrestacionEstadoEnum estado, Medico medico);
 
-    Prestacion findByIdAndEstado(Long id, PrestacionEstadoEnum estado);
+    List<Prestacion> findByTipoAndIdInAndEstado(PrestacionTiposEnum tipo, List<Long> prestacionIds, PrestacionEstadoEnum estado);
 }

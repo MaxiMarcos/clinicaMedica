@@ -57,4 +57,9 @@ public class MedicoService implements IMedicoService {
     public List<Medico> buscarPorEspecialidad(PrestacionTiposEnum especialidad) {
         return medicoRepo.findByEspecializacion(especialidad);
     }
+
+    @Override
+    public List<Medico> buscarPorApellido(String apellido) {
+        return medicoRepo.findByApellido(apellido);
+    }
 }

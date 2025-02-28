@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface MedicoRepository extends JpaRepository<Medico, Long> {
 
-    Medico findByNombre(String nombre);
+    List<Medico> findByApellido(String Apellido);
 
     List<Medico> findByEspecializacion(PrestacionTiposEnum prestacionTipo);
 }

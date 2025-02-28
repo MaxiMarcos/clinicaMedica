@@ -1,15 +1,13 @@
-package com.clinica.gestionMedica.controller;
+package com.clinica.gestionMedica.controller.user;
 
+import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
 import com.clinica.gestionMedica.dto.ReservaDto;
-import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
 import com.clinica.gestionMedica.service.impl.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/reserva")
@@ -29,12 +27,12 @@ public class ReservaController {
         }
     }
 
-    // proceso de obtener/comprar turno
-    @PostMapping("/{pacienteId}/{prestacionId}")
-    public ResponseEntity<?> agregarPrestacionEnReserva( @PathVariable Long pacienteId,
-                                                         @PathVariable Long prestacionId){
+    // se genera reserva con prestaciones
+    @PostMapping("/obtener-turno")
+    public ResponseEntity<?> agregarPrestacionEnReserva(@RequestBody PrestacionRequestDTO prestacionRequestDTO){
 
-        ReservaDto reservaDto = reservaService.agregarPrestacionEnReserva(pacienteId, prestacionId);
+        ReservaDto reservaDto = reservaService.agregarPrestacionEnReserva(prestacionRequestDTO);
+
         if(reservaDto != null){
             return ResponseEntity.status(HttpStatus.CREATED).body(reservaDto);
         }else {

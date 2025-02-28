@@ -1,4 +1,4 @@
-package com.clinica.gestionMedica.controller;
+package com.clinica.gestionMedica.controller.admin;
 
 import com.clinica.gestionMedica.dto.PacienteDto;
 import com.clinica.gestionMedica.entity.Paciente;

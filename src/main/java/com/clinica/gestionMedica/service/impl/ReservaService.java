@@ -1,9 +1,12 @@
 package com.clinica.gestionMedica.service.impl;
 
 import com.clinica.gestionMedica.dto.PrestacionDto;
+import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
 import com.clinica.gestionMedica.dto.ReservaDto;
+import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
+import com.clinica.gestionMedica.enums.ObraSocialEnum;
 import com.clinica.gestionMedica.enums.PresenciaEnum;
 import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
 import com.clinica.gestionMedica.enums.ReservaEstadoEnum;
@@ -20,14 +23,20 @@ import java.util.List;
 @Service
 public class ReservaService implements IReservaService {
 
+    // CAMBIAR LLAMADOS A REPOR POR SERVICE
+
     private final ReservaRepository reservaRepo;
+    private final PrestacionService prestacionService;
     private final PrestacionRepository prestacionRepo;
     private final ReservaMapper reservaMapper;
+    private final PacienteService pacienteService;
 
-    public ReservaService(ReservaRepository reservaRepo, PacienteService pacienteService, PacienteRepository pacienteRepo, PrestacionRepository prestacionRepo, ReservaMapper reservaMapper) {
+    public ReservaService(ReservaRepository reservaRepo, PacienteService pacienteService, PrestacionService prestacionService, PrestacionRepository prestacionRepo, ReservaMapper reservaMapper) {
         this.reservaRepo = reservaRepo;
+        this.prestacionService = prestacionService;
         this.prestacionRepo = prestacionRepo;
         this.reservaMapper = reservaMapper;
+        this.pacienteService = pacienteService;
     }
 
     @Override
@@ -38,25 +47,49 @@ public class ReservaService implements IReservaService {
         return reservaRepo.save(reserva);
     }
 
-    public ReservaDto agregarPrestacionEnReserva(Long pacienteId, Long prestacionId) {
+    // puedo cambiar a List<Long> para traer todas las q ameriten
+    public ReservaDto agregarPrestacionEnReserva(PrestacionRequestDTO prestacionRequestDTO) {
 
-        // Busco si un paciente tiene reserva asignada y en Pendiente
-        // Busco una prestacion y si está disponible (es decir, no agregada en otra reserva) la agrego
-        // agrego la prestacion a la reserva
-        // cambio la prestacion a NO DISPONIBLE, reserva a PAGADO y guardo
+        // Elijo y filtro por disponibilidad y especialidad
+        // Elijo prestaciones por ID
+        // creo una nueva reserva y le agrego las prestaciones
+        // cambio las prestaciones a NO DISPONIBLE, reserva primeramente en PAGO PENDIENTE (luego manejar cuando sucede el cambio) y guardo
 
-        Reserva reserva = reservaRepo.findByPaciente_IdAndEstadoPago(pacienteId, ReservaEstadoEnum.PENDIENTE);
-        Prestacion prestacion = prestacionRepo.findByIdAndEstado(prestacionId, PrestacionEstadoEnum.DISPONIBLE);
+        List<Prestacion> prestacionesDisponibles = prestacionService.buscarPorEspecialidadDisponibilidad(prestacionRequestDTO);
+        if (prestacionesDisponibles.isEmpty()) {
+            throw new IllegalArgumentException("No hay prestaciones disponibles para reservar");
+        }
 
-        reserva.setEstadoPago(ReservaEstadoEnum.PAGADO);
-        prestacion.setReserva(reserva);
-        prestacion.setEstado(PrestacionEstadoEnum.NODISPONIBLE);
+        Reserva reserva = new Reserva();
+        Paciente paciente = pacienteService.traerPaciente(prestacionRequestDTO.getPacienteId());
+        if(paciente == null){
+            throw new IllegalArgumentException("El paciente no existe");
+        }
 
+        reserva.setPaciente(paciente);
+        reserva.setEstadoPago(ReservaEstadoEnum.PENDIENTE);
+
+        // se mantiene el precio de cada prestacion solo si el paciente no tiene obra social
+        if(paciente.getObraSocial() != ObraSocialEnum.NINGUNA){
+            for(Prestacion p : prestacionesDisponibles){
+                p.setPrecio(0);
+            }
+        }
+        for (Prestacion p : prestacionesDisponibles) {
+            p.setEstado(PrestacionEstadoEnum.NODISPONIBLE);
+            p.setReserva(reserva);
+        }
+
+        reserva.setPrestaciones(prestacionesDisponibles);
+        reservaRepo.save(reserva);
+
+        prestacionRepo.saveAll(prestacionesDisponibles);
         ReservaDto reservaDto = reservaMapper.conversionADto(reserva);
 
-        prestacionRepo.save(prestacion);
-        reservaRepo.save(reserva);
         return reservaDto;
+
+        // cambiar precio total reserva
+        // agregar tipos de descuentos
     }
 
     @Override

@@ -29,7 +29,7 @@ public class ReservaMapper {
                 .collect(Collectors.toList());
 
         return ReservaDto.builder()
-                .estadoPresencia(reserva.getEstadoPresencia())
+                //.estadoPresencia(reserva.getEstadoPresencia())
                 .estadoPago(reserva.getEstadoPago())
                 .precioTotal(reserva.getPrecioTotal())
                 .prestaciones(prestacionesDto)

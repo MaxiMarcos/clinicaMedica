@@ -14,4 +14,5 @@ public interface IMedicoService {
     List<Medico> traerMedicos();
     void eliminarMedico(Long id);
     List<Medico> buscarPorEspecialidad(PrestacionTiposEnum especialidad);
+    List<Medico> buscarPorApellido(String apellido);
 }

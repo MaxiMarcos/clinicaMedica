@@ -1,4 +1,4 @@
-package com.clinica.gestionMedica.controller;
+package com.clinica.gestionMedica.controller.user;
 
 import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.service.impl.PrestacionService;
@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/prestacion")
 public class PrestacionController {
@@ -16,7 +14,7 @@ public class PrestacionController {
     @Autowired
     PrestacionService prestacionService;
 
-    @PostMapping("/sacar-turno")
+    @PostMapping("/obtener-turno")
     public ResponseEntity<?> crearPrestacionCliente(@RequestBody Prestacion prestacion) {
 
         Prestacion nuevaPrestacion = prestacionService.crearPrestacion(prestacion);

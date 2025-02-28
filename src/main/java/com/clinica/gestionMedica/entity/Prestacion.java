@@ -2,6 +2,7 @@ package com.clinica.gestionMedica.entity;
 
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Prestacion {
     private int codigoPrestacion;
     private String descripcion;
     private double precio;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fechaConsulta;
 
     @ManyToOne

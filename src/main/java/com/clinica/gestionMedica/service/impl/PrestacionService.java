@@ -1,5 +1,6 @@
 package com.clinica.gestionMedica.service.impl;
 
+import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
 import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
@@ -18,10 +19,13 @@ import java.util.List;
 @Service
 public class PrestacionService implements IPrestacionService {
 
-    @Autowired
-    PrestacionRepository prestacionRepo;
-    @Autowired
-    MedicoService medicoService;
+    private final PrestacionRepository prestacionRepo;
+    private final MedicoService medicoService;
+
+    public PrestacionService(PrestacionRepository prestacionRepo, MedicoService medicoService) {
+        this.prestacionRepo = prestacionRepo;
+        this.medicoService = medicoService;
+    }
 
 
     public Prestacion crearPrestacionAdmin(Prestacion prestacion) {
@@ -32,26 +36,24 @@ public class PrestacionService implements IPrestacionService {
     @Override
     public Prestacion crearPrestacion(Prestacion prestacion) {
 
+        List<Medico> medicos = medicoService.buscarPorEspecialidad(prestacion.getTipo());
+        if(medicos.isEmpty()){
+            throw new IllegalArgumentException("Actualmente no trabajamos con esta especialidad");
+        }
 
-        Prestacion prestacionNueva = this.traerPrestacionPorTipoYFecha(prestacion.getTipo(), prestacion.getFechaConsulta(), prestacion.getMedico());
-
-
-        List<Medico> medicos = medicoService.buscarPorEspecialidad(prestacionNueva.getTipo());
-
-        Medico medicoSeleccionado = prestacionNueva.getMedico();
+        Medico medicoSeleccionado = prestacion.getMedico();
+        if(medicoSeleccionado == null){
+            throw new IllegalArgumentException("El médico seleccionado no existe");
+        }
 
         // Validamos si el médico pertenece a la especialización correcta
         boolean coincide = medicos.stream()
                 .anyMatch(m -> m.getId().equals(medicoSeleccionado.getId()));
 
-        if (coincide) {
-            return prestacionRepo.save(prestacionNueva);
-        } else {
-            // Si no coincide, asignamos el primer médico disponible de la lista
-            System.out.println("El médico elegido no atiende esta especialidad, se asignará uno que si: ");
-            prestacion.setMedico(medicos.get(0));
-            return prestacionRepo.save(prestacion);
+        if (!coincide) {
+            throw new IllegalArgumentException("El médico elegido no atiende esta especialidad");
         }
+        return prestacionRepo.save(prestacion);
     }
 
     @Override
@@ -72,16 +74,11 @@ public class PrestacionService implements IPrestacionService {
         return prestacionRepo.findById(id).orElse(null);
     }
 
-    public Prestacion traerPrestacionPorTipoYFecha(PrestacionTiposEnum nombre, LocalDateTime fecha, Medico medico) {
-       Prestacion prestacion = prestacionRepo.findByTipoAndFechaConsultaAndEstadoAndMedico(nombre, fecha, PrestacionEstadoEnum.DISPONIBLE, medico);
+    public List<Prestacion> buscarPorEspecialidadDisponibilidad(PrestacionRequestDTO prestacionRequestDTO){
 
-        if (prestacion == null) {
-            throw new RuntimeException(String.format("No se encontró una prestación disponible con tipo: %s, fecha: %s, médico: %s",
-                    nombre, fecha, medico.getNombre())); // Suponiendo que Medico tiene un método getNombre()
-        }
-
-        return prestacion;
+        return prestacionRepo.findByTipoAndIdInAndEstado(prestacionRequestDTO.getTipo(), prestacionRequestDTO.getPrestacionId(), PrestacionEstadoEnum.DISPONIBLE);
     }
+
 
     @Override
     public List<Prestacion> traerPrestaciones() {

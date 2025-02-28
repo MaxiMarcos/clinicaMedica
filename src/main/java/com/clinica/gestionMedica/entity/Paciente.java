@@ -1,5 +1,6 @@
 package com.clinica.gestionMedica.entity;
 
+import com.clinica.gestionMedica.enums.ObraSocialEnum;
 import com.clinica.gestionMedica.security.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,8 @@ import java.util.List;
 @PrimaryKeyJoinColumn(referencedColumnName="id")
 public class Paciente extends Persona {
 
+    @Enumerated(EnumType.STRING)
+    private ObraSocialEnum obraSocial;
     @OneToMany(mappedBy = "paciente")
     private List<Reserva> listaReservas;
 }
