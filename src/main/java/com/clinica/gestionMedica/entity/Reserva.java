@@ -31,10 +31,6 @@ public class Reserva {
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
 
-    //@ManyToOne
-   // @JoinColumn(name = "medico_id") Médico ya está asociado en Prestación, la cual se relaciona con Reserva
-    //private Medico medico;
-
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Prestacion> prestaciones;
 }

@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class RegisterRequest {
 
-    private String username;
+    private int dni;
     private String email;
     private String password;
 }

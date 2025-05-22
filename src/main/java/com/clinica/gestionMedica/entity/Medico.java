@@ -1,5 +1,7 @@
 package com.clinica.gestionMedica.entity;
 
+import com.clinica.gestionMedica.dto.MedicoDto;
+import com.clinica.gestionMedica.enums.MedicoEstadoEnum;
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,8 @@ public class Medico extends Persona{
     @Enumerated(EnumType.STRING)
     private PrestacionTiposEnum especializacion;
     private Double sueldo;
+    @Enumerated(EnumType.STRING)
+    private MedicoEstadoEnum disponibilidad = MedicoEstadoEnum.DISPONIBLE;
 
 
    // @OneToMany(mappedBy = "medico")

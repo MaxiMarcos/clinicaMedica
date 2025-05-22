@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-    private String username;
+    private int dni;
     private String email;
     @Enumerated(EnumType.STRING)
     private RoleName role;

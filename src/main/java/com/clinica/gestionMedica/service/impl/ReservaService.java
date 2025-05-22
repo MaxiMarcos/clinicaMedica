@@ -3,13 +3,11 @@ package com.clinica.gestionMedica.service.impl;
 import com.clinica.gestionMedica.dto.PrestacionDto;
 import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
 import com.clinica.gestionMedica.dto.ReservaDto;
+import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
-import com.clinica.gestionMedica.enums.ObraSocialEnum;
-import com.clinica.gestionMedica.enums.PresenciaEnum;
-import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
-import com.clinica.gestionMedica.enums.ReservaEstadoEnum;
+import com.clinica.gestionMedica.enums.*;
 import com.clinica.gestionMedica.mapper.ReservaMapper;
 import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.repository.PrestacionRepository;
@@ -50,20 +48,22 @@ public class ReservaService implements IReservaService {
     // puedo cambiar a List<Long> para traer todas las q ameriten
     public ReservaDto agregarPrestacionEnReserva(PrestacionRequestDTO prestacionRequestDTO) {
 
-        // Elijo y filtro por disponibilidad y especialidad
-        // Elijo prestaciones por ID
-        // creo una nueva reserva y le agrego las prestaciones
-        // cambio las prestaciones a NO DISPONIBLE, reserva primeramente en PAGO PENDIENTE (luego manejar cuando sucede el cambio) y guardo
+        Paciente paciente = pacienteService.traerPaciente(prestacionRequestDTO.getPacienteId());
+        Reserva reserva = new Reserva();
+        if(paciente == null){
+            throw new IllegalArgumentException("El paciente no existe");
+        }
 
         List<Prestacion> prestacionesDisponibles = prestacionService.buscarPorEspecialidadDisponibilidad(prestacionRequestDTO);
         if (prestacionesDisponibles.isEmpty()) {
             throw new IllegalArgumentException("No hay prestaciones disponibles para reservar");
         }
 
-        Reserva reserva = new Reserva();
-        Paciente paciente = pacienteService.traerPaciente(prestacionRequestDTO.getPacienteId());
-        if(paciente == null){
-            throw new IllegalArgumentException("El paciente no existe");
+        for (Prestacion p : prestacionesDisponibles) {
+            Medico m = p.getMedico();
+            if (m.getDisponibilidad() != MedicoEstadoEnum.DISPONIBLE) {
+                throw new IllegalArgumentException("El médico " + m.getNombre() + " ya no está disponible para la prestación");
+            }
         }
 
         reserva.setPaciente(paciente);

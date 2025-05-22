@@ -1,19 +1,18 @@
 package com.clinica.gestionMedica.entity;
 
+import com.clinica.gestionMedica.dto.MedicoDto;
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -40,5 +39,4 @@ public class Prestacion {
     @ManyToOne
     @JoinColumn(name = "medico_id")
     private Medico medico;
-
 }

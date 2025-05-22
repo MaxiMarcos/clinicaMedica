@@ -17,15 +17,20 @@ import java.util.stream.Collectors;
 @Component
 public class ReservaMapper {
 
-    public MedicoDto conversionMedicoADto(Medico medico) {
-        return new MedicoDto(medico.getNombre(), medico.getApellido());
+    public MedicoDto conversionMedicoDto(Medico medico) {
+        return new MedicoDto(medico.getId(), medico.getNombre(), medico.getApellido());
     }
 
     public ReservaDto conversionADto(Reserva reserva){
 
 
         List<PrestacionDto> prestacionesDto = reserva.getPrestaciones().stream()
-                .map(prestacion -> new PrestacionDto(prestacion.getTipo(), prestacion.getEstado(),  prestacion.getFechaConsulta(), conversionMedicoADto(prestacion.getMedico())))
+                .map(prestacion -> new PrestacionDto(prestacion.getCodigoPrestacion(),
+                        prestacion.getDescripcion(),prestacion.getPrecio(),
+                        prestacion.getTipo(),
+                        prestacion.getEstado(),
+                        prestacion.getFechaConsulta(),
+                        conversionMedicoDto(prestacion.getMedico())))
                 .collect(Collectors.toList());
 
         return ReservaDto.builder()

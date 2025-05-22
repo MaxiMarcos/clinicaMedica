@@ -2,6 +2,7 @@ package com.clinica.gestionMedica.service.impl;
 
 import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
+import com.clinica.gestionMedica.enums.MedicoEstadoEnum;
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import com.clinica.gestionMedica.repository.MedicoRepository;
 import com.clinica.gestionMedica.service.IMedicoService;
@@ -54,12 +55,18 @@ public class MedicoService implements IMedicoService {
     }
 
     @Override
-    public List<Medico> buscarPorEspecialidad(PrestacionTiposEnum especialidad) {
-        return medicoRepo.findByEspecializacion(especialidad);
+    public List<Medico> buscarPorEspecialidadYDisponibilidad(PrestacionTiposEnum especializacion, MedicoEstadoEnum disponibilidad) {
+        return medicoRepo.findByEspecializacionAndDisponibilidad(especializacion, disponibilidad);
+    }
+
+    @Override
+    public List<Medico> buscarPorEspecialidad(PrestacionTiposEnum especializacion) {
+        return medicoRepo.findByEspecializacion(especializacion);
     }
 
     @Override
     public List<Medico> buscarPorApellido(String apellido) {
         return medicoRepo.findByApellido(apellido);
     }
+
 }

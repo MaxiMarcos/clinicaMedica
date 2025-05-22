@@ -47,17 +47,17 @@ public class AuthServiceImpl implements IAuthService {
     public TokenResponse register(RegisterRequest registerRequest, RoleName roleName){
 
         User user = User.builder()
-                .username(registerRequest.getUsername())
+                .dni(registerRequest.getDni())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(roleName)
                 .paciente(pacienteRepo.findByEmail(registerRequest.getEmail())) // se asocia con un paciente si es que existe el mail, sino queda null ya que un usuario puede no ser paciente
                 .build();
 
-        Paciente paciente = user.getPaciente();
-        if (paciente == null) {
-            throw new IllegalStateException("El usuario no tiene un paciente asociado con el email: " + registerRequest.getEmail());
-        }
+       // Paciente paciente = user.getPaciente();
+     //   if (paciente == null) {
+         //   throw new IllegalStateException("El usuario no tiene un paciente asociado con el email: " + registerRequest.getEmail());
+       // }   SIN ESTO SE PERMITE REGISTRO SIN ESTAR ASOCIADO A UN PACIENTE ANTES
 
         var savedUser = authRepo.save(user);
         var jwtToken = jwtService.generateToken(savedUser);
@@ -113,7 +113,7 @@ public class AuthServiceImpl implements IAuthService {
         List<User> users = authRepo.findAll();
 
         return users.stream()
-                .map(user -> new UserResponse(user.getUsername(), user.getEmail(), user.getRole()))
+                .map(user -> new UserResponse(user.getDni(), user.getEmail(), user.getRole()))
                 .collect(Collectors.toList());
 
     }

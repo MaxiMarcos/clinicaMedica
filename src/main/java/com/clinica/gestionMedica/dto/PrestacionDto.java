@@ -16,6 +16,11 @@ import java.time.LocalDateTime;
 @Builder
 public class PrestacionDto {
 
+    private int codigoPrestacion;
+    private String descripcion;
+    private double precio;
+
+
     private PrestacionTiposEnum tipo;
     private PrestacionEstadoEnum estado;
     private LocalDateTime fechaConsulta;
