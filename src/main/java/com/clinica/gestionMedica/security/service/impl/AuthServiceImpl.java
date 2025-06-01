@@ -46,24 +46,29 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public TokenResponse register(RegisterRequest registerRequest, RoleName roleName){
 
+        Paciente pacientePorDni = pacienteRepo.findByDni(registerRequest.getDni());
+
+        if (pacientePorDni != null) {
+            throw new IllegalStateException("Ya existe un usuario con este DNI, pruebe iniciando sesión." );
+        }
+
         User user = User.builder()
                 .dni(registerRequest.getDni())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(roleName)
-                .paciente(pacienteRepo.findByEmail(registerRequest.getEmail())) // se asocia con un paciente si es que existe el mail, sino queda null ya que un usuario puede no ser paciente
+                .paciente(pacienteRepo.findByDni(registerRequest.getDni()))
                 .build();
 
-       // Paciente paciente = user.getPaciente();
-     //   if (paciente == null) {
-         //   throw new IllegalStateException("El usuario no tiene un paciente asociado con el email: " + registerRequest.getEmail());
-       // }   SIN ESTO SE PERMITE REGISTRO SIN ESTAR ASOCIADO A UN PACIENTE ANTES
+        Paciente paciente = user.getPaciente();
+        if (paciente == null & roleName == RoleName.CUSTOMER) {
+            throw new IllegalStateException("No es posible crear su usuario porque no existe su DNI en nuestros registros, por favor contáctese con la clínica. " );
+       }
 
         var savedUser = authRepo.save(user);
         var jwtToken = jwtService.generateToken(savedUser);
         var refreshToken = jwtService.generateRefreshToken(savedUser);
         saveUserToken(savedUser, jwtToken);
-
 
         return new TokenResponse(jwtToken, refreshToken);
 

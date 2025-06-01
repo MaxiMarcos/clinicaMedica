@@ -1,6 +1,7 @@
 package com.clinica.gestionMedica.mapper;
 
 import com.clinica.gestionMedica.dto.PacienteDto;
+import com.clinica.gestionMedica.dto.ReservaDto;
 import com.clinica.gestionMedica.entity.Paciente;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,12 @@ import java.util.List;
 @Component
 public class PacienteMapper {
 
+    private final ReservaMapper reservaMapper;
+
+    public PacienteMapper(ReservaMapper reservaMapper) {
+        this.reservaMapper = reservaMapper;
+    }
+
     public PacienteDto conversionAPacienteDto(Paciente paciente){
 
         return PacienteDto.builder()
@@ -18,8 +25,10 @@ public class PacienteMapper {
                 .nombre(paciente.getNombre())
                 .apellido(paciente.getApellido())
                 .telefono(paciente.getTelefono())
+                .historial(reservaMapper.ListaHistorialDto(paciente.getListaReservas()))
                 .build();
     }
+
 
     public List<PacienteDto> conversionPacientesDto(List<Paciente> pacientes){
 

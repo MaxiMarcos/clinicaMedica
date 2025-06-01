@@ -1,5 +1,6 @@
 package com.clinica.gestionMedica.service.impl;
 
+import com.clinica.gestionMedica.dto.PacienteDto;
 import com.clinica.gestionMedica.dto.PrestacionDto;
 import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
 import com.clinica.gestionMedica.dto.ReservaDto;
@@ -8,6 +9,7 @@ import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Reserva;
 import com.clinica.gestionMedica.enums.*;
+import com.clinica.gestionMedica.mapper.PacienteMapper;
 import com.clinica.gestionMedica.mapper.ReservaMapper;
 import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.repository.PrestacionRepository;
@@ -27,14 +29,14 @@ public class ReservaService implements IReservaService {
     private final PrestacionService prestacionService;
     private final PrestacionRepository prestacionRepo;
     private final ReservaMapper reservaMapper;
-    private final PacienteService pacienteService;
+    private final PacienteRepository pacienteRepository;
 
-    public ReservaService(ReservaRepository reservaRepo, PacienteService pacienteService, PrestacionService prestacionService, PrestacionRepository prestacionRepo, ReservaMapper reservaMapper) {
+    public ReservaService(ReservaRepository reservaRepo, PacienteService pacienteService, PrestacionService prestacionService, PrestacionRepository prestacionRepo, ReservaMapper reservaMapper, PacienteMapper pacienteMapper, PacienteRepository pacienteRepository) {
         this.reservaRepo = reservaRepo;
         this.prestacionService = prestacionService;
         this.prestacionRepo = prestacionRepo;
         this.reservaMapper = reservaMapper;
-        this.pacienteService = pacienteService;
+        this.pacienteRepository = pacienteRepository;
     }
 
     @Override
@@ -48,7 +50,8 @@ public class ReservaService implements IReservaService {
     // puedo cambiar a List<Long> para traer todas las q ameriten
     public ReservaDto agregarPrestacionEnReserva(PrestacionRequestDTO prestacionRequestDTO) {
 
-        Paciente paciente = pacienteService.traerPaciente(prestacionRequestDTO.getPacienteId());
+        Paciente paciente = pacienteRepository.findById(prestacionRequestDTO.getPacienteId()).orElse(null);
+
         Reserva reserva = new Reserva();
         if(paciente == null){
             throw new IllegalArgumentException("El paciente no existe");

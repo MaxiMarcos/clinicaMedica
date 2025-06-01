@@ -28,7 +28,7 @@ public class AuthController {
     @Autowired
     UserRepository userRepo;
 
-    @PostMapping("/register-customer")
+    @PostMapping("/register")
     public ResponseEntity<TokenResponse> registerCustomer(@RequestBody RegisterRequest registerRequest) {
 
         final TokenResponse token = authService.register(registerRequest, RoleName.CUSTOMER);
@@ -36,7 +36,7 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @PostMapping("/register-admin")
+    @PostMapping("/admin/register")
     public ResponseEntity<TokenResponse> registerAdmin(@RequestBody RegisterRequest registerRequest) {
 
         final TokenResponse token = authService.register(registerRequest, RoleName.ADMIN);

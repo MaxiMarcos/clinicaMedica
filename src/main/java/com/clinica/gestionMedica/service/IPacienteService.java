@@ -7,9 +7,10 @@ import java.util.List;
 
 public interface IPacienteService {
 
-    Paciente crearPaciente(Paciente paciente);
-    Paciente editarPaciente(Long id, Paciente paciente);
-    Paciente traerPaciente(Long id);
+    PacienteDto crearPaciente(Paciente paciente);
+    PacienteDto editarPaciente(Long id, Paciente paciente);
+    PacienteDto traerPaciente(Long id);
+    PacienteDto traerPacientePorDni(String dni);
     List<Paciente> traerPacientes();
     void eliminarPaciente(Long id);
     PacienteDto traerHistorial(Long id);

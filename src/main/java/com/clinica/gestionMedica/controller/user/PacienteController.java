@@ -19,23 +19,12 @@ public class PacienteController {
     @PostMapping("/crear")
     public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente){
 
-        Paciente pacienteCreado = pacienteService.crearPaciente(paciente);
+        PacienteDto pacienteDto = pacienteService.crearPaciente(paciente);
 
-        if(pacienteCreado != null){
-            return ResponseEntity.status(HttpStatus.CREATED).body(pacienteCreado);
+        if(pacienteDto != null){
+            return ResponseEntity.status(HttpStatus.CREATED).body(pacienteDto);
         }else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear Paciente");
-        }
-    }
-
-    @GetMapping("/traer/{id}")
-    public ResponseEntity<?> traerPaciente(@PathVariable Long id){
-
-        Paciente paciente = pacienteService.traerPaciente(id);
-        if(paciente != null){
-            return ResponseEntity.status(HttpStatus.OK).body(paciente);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer Paciente con id: " + id);
         }
     }
 
@@ -55,9 +44,9 @@ public class PacienteController {
     @PutMapping("/editar/{id}")
     public ResponseEntity<?> editarPaciente(@PathVariable Long id, @RequestBody Paciente paciente){
 
-        Paciente nuevoPaciente = pacienteService.editarPaciente(id, paciente);
-        if(nuevoPaciente != null){
-            return ResponseEntity.status(HttpStatus.OK).body("Paciente editado exitosamente " + nuevoPaciente);
+        PacienteDto pacienteEditado = pacienteService.editarPaciente(id, paciente);
+        if(pacienteEditado != null){
+            return ResponseEntity.status(HttpStatus.OK).body("Paciente editado exitosamente " + pacienteEditado);
         }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró al paciente con ID: " + id);
         }

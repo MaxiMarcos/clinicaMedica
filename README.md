@@ -34,3 +34,45 @@ Swagger UI: http://localhost:9001/swagger-ui/index.html
 | POST    | `/reserva/crear` | Paciente inicia el proceso de compra         |
 | POST   | `/prestacion/obtener-turno `   | Elección de prestación          |
 | POST    | `/reserva/{pacienteId}/{prestacionId}` | Prestaciones se agregan al carrito      |
+
+
+🧾 Registro/login:
+Rol Usuario:
+ - [x] Iniciar sesión
+
+ - [x] Registrar usuario paciente
+ - [x] Registrar usuario admin
+ Paciente:
+
+ - [x] Crear paciente (admin)
+
+ - [x] Listar pacientes (admin)
+
+ - [x] Buscar paciente por DNI o ID (admin)
+
+ - [] Actualizar paciente (admin/paciente)
+
+ - [] Eliminar paciente (admin)
+
+🗓️ Turno:
+ - [] Crear/agendar turno
+
+ - [] Listar turnos por fecha o paciente
+
+ - [] Cancelar turno
+
+ - [] Validar disponibilidad (evitar superposición de turnos)
+
+📄 Consulta médica:
+ - [] Crear consulta (al final del turno)
+
+ - [] Listar consultas por paciente
+
+ - [] Ver detalle de una consulta
+
+👨‍⚕️ Médico:
+ - [] Crear médico
+
+ - [] Listar médicos
+
+ - [] Consultar disponibilidad
