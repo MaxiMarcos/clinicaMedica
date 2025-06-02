@@ -3,11 +3,14 @@ package com.clinica.gestionMedica.controller.user;
 import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
 import com.clinica.gestionMedica.dto.ReservaDto;
 import com.clinica.gestionMedica.entity.Reserva;
+import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import com.clinica.gestionMedica.service.impl.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/reserva")
@@ -28,10 +31,10 @@ public class ReservaController {
     }
 
     // se genera reserva con prestaciones
-    @PostMapping("/obtener-turno")
-    public ResponseEntity<?> agregarPrestacionEnReserva(@RequestBody PrestacionRequestDTO prestacionRequestDTO){
-
-        ReservaDto reservaDto = reservaService.agregarPrestacionEnReserva(prestacionRequestDTO);
+    @PutMapping("/obtener-turno")
+    public ResponseEntity<?> agregarPrestacionEnReserva(@PathVariable  Long pacienteId,
+                                                        @RequestParam Long reservaId){
+        ReservaDto reservaDto = reservaService.agregarPrestacionEnReserva(pacienteId, reservaId);
 
         if(reservaDto != null){
             return ResponseEntity.status(HttpStatus.CREATED).body(reservaDto);
@@ -48,6 +51,17 @@ public class ReservaController {
             return ResponseEntity.status(HttpStatus.OK).body(reserva);
         }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer la Reserva");
+        }
+    }
+
+    @GetMapping("/traer/filtro")
+    public ResponseEntity<?> traerReservasPorEspecialidadYDisponibilidad(@RequestBody PrestacionTiposEnum tipo){
+        List<Reserva> reservas = reservaService.buscarPorEspecialidadDisponibilidad(tipo);
+
+        if(reservas != null){
+            return ResponseEntity.status(HttpStatus.OK).body(reservas);
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer reservas");
         }
     }
 

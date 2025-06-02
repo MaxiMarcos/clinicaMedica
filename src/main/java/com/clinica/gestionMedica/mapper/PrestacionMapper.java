@@ -25,26 +25,18 @@ public class PrestacionMapper {
     public PrestacionDto conversionAPrestacionDto(Prestacion prestacion){
 
         return PrestacionDto.builder()
-                .medicoDto(conversionMedicoDto(prestacion.getMedico()))
-                .codigoPrestacion(prestacion.getCodigoPrestacion())
                 .tipo(prestacion.getTipo())
                 .descripcion(prestacion.getDescripcion())
                 .precio(prestacion.getPrecio())
-                .estado(prestacion.getEstado())
-                .fechaConsulta(prestacion.getFechaConsulta())
                 .build();
     }
 
     public Prestacion conversionAPrestacion(PrestacionDto prestacionDto){
 
         return Prestacion.builder()
-                .medico(conversionMedico(prestacionDto.getMedicoDto()))
-                .codigoPrestacion(prestacionDto.getCodigoPrestacion())
                 .tipo(prestacionDto.getTipo())
                 .descripcion(prestacionDto.getDescripcion())
                 .precio(prestacionDto.getPrecio())
-                .estado(prestacionDto.getEstado())
-                .fechaConsulta(prestacionDto.getFechaConsulta())
                 .build();
     }
 }

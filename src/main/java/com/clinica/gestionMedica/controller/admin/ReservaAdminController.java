@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reserva-admin")
+@RequestMapping("/admin/reserva")
 public class ReservaAdminController {
 
     private final ReservaService reservaService;

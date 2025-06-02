@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/prestacion-admin")
+@RequestMapping("/admin/prestacion")
 public class PrestacionAdminController {
 
     private final PrestacionService prestacionService;
@@ -21,7 +21,7 @@ public class PrestacionAdminController {
     @PostMapping("/crear")
     public ResponseEntity<?> crearPrestacionAdmin(@RequestBody Prestacion prestacion) {
 
-        Prestacion nuevaPrestacion = prestacionService.crearPrestacionAdmin(prestacion);
+        Prestacion nuevaPrestacion = prestacionService.crearPrestacion(prestacion);
 
         if (nuevaPrestacion != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPrestacion);

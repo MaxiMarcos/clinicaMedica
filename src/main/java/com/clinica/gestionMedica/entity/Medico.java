@@ -25,8 +25,8 @@ public class Medico extends Persona{
     @Enumerated(EnumType.STRING)
     private PrestacionTiposEnum especializacion;
     private Double sueldo;
-    @Enumerated(EnumType.STRING)
-    private MedicoEstadoEnum disponibilidad = MedicoEstadoEnum.DISPONIBLE;
+  //  @Enumerated(EnumType.STRING)
+   // private MedicoEstadoEnum disponibilidad = MedicoEstadoEnum.DISPONIBLE;
 
 
    // @OneToMany(mappedBy = "medico")

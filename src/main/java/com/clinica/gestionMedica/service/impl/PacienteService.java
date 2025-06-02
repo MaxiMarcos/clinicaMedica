@@ -50,7 +50,6 @@ public class PacienteService implements IPacienteService {
         nuevoPaciente.setTelefono(paciente.getTelefono());
         nuevoPaciente.setDireccion(paciente.getDireccion());
         nuevoPaciente.setEmail(paciente.getEmail());
-        nuevoPaciente.setListaReservas(paciente.getListaReservas());
 
         pacienteRepo.save(nuevoPaciente);
         return pacienteMapper.conversionAPacienteDto(nuevoPaciente);

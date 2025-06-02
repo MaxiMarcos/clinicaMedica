@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/paciente/admin")
+@RequestMapping("/admin/paciente")
 public class PacienteAdminController {
 
     private final PacienteService pacienteService;
@@ -21,6 +21,18 @@ public class PacienteAdminController {
     public PacienteAdminController(PacienteService pacienteService, PacienteMapper pacienteMapper, PacienteRepository pacienteRepository) {
         this.pacienteService = pacienteService;
         this.pacienteMapper = pacienteMapper;
+    }
+
+    @PostMapping("/crear")
+    public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente){
+
+        PacienteDto pacienteDto = pacienteService.crearPaciente(paciente);
+
+        if(pacienteDto != null){
+            return ResponseEntity.status(HttpStatus.CREATED).body(pacienteDto);
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear Paciente");
+        }
     }
 
     @GetMapping("/traer-todo")

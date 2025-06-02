@@ -16,18 +16,6 @@ public class PacienteController {
     PacienteService pacienteService;
 
 
-    @PostMapping("/crear")
-    public ResponseEntity<?> crearPaciente(@RequestBody Paciente paciente){
-
-        PacienteDto pacienteDto = pacienteService.crearPaciente(paciente);
-
-        if(pacienteDto != null){
-            return ResponseEntity.status(HttpStatus.CREATED).body(pacienteDto);
-        }else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear Paciente");
-        }
-    }
-
     @GetMapping("/historial/{id}") // probablemente deba modificar para poder usar #id == authentication.principal.id"
     public ResponseEntity<?> historialPaciente(@PathVariable Long id){
 

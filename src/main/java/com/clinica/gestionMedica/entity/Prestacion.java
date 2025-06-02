@@ -24,19 +24,7 @@ public class Prestacion {
 
     @Enumerated(EnumType.STRING)
     private PrestacionTiposEnum tipo;
-    @Enumerated(EnumType.STRING)
-    private PrestacionEstadoEnum estado = PrestacionEstadoEnum.DISPONIBLE;
-    private int codigoPrestacion;
+
     private String descripcion;
-    private double precio;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime fechaConsulta;
-
-    @ManyToOne
-    @JoinColumn(name = "reserva_id")
-    private Reserva reserva;
-
-    @ManyToOne
-    @JoinColumn(name = "medico_id")
-    private Medico medico;
+    private int precio;
 }

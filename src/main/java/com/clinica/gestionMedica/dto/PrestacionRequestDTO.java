@@ -13,6 +13,7 @@ import java.util.List;
 public class PrestacionRequestDTO {
 
     private Long pacienteId;
+    private Long reservaId;
     private PrestacionTiposEnum tipo;
-    private List<Long> prestacionId;
+    //private List<Long> prestacionId;
 }

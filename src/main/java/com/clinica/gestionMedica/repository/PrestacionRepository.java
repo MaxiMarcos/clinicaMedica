@@ -14,7 +14,4 @@ import java.util.List;
 @Repository
 public interface PrestacionRepository extends JpaRepository<Prestacion, Long> {
 
-    Prestacion findByTipoAndFechaConsultaAndEstadoAndMedico(PrestacionTiposEnum tipo, LocalDateTime fecha, PrestacionEstadoEnum estado, Medico medico);
-
-    List<Prestacion> findByTipoAndIdInAndEstado(PrestacionTiposEnum tipo, List<Long> prestacionIds, PrestacionEstadoEnum estado);
 }

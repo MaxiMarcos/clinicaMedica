@@ -54,10 +54,6 @@ public class MedicoService implements IMedicoService {
         medicoRepo.deleteById(id);
     }
 
-    @Override
-    public List<Medico> buscarPorEspecialidadYDisponibilidad(PrestacionTiposEnum especializacion, MedicoEstadoEnum disponibilidad) {
-        return medicoRepo.findByEspecializacionAndDisponibilidad(especializacion, disponibilidad);
-    }
 
     @Override
     public List<Medico> buscarPorEspecialidad(PrestacionTiposEnum especializacion) {

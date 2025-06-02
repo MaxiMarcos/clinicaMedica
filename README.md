@@ -37,7 +37,6 @@ Swagger UI: http://localhost:9001/swagger-ui/index.html
 
 
 🧾 Registro/login:
-Rol Usuario:
  - [x] Iniciar sesión
 
  - [x] Registrar usuario paciente
@@ -55,9 +54,9 @@ Rol Usuario:
  - [] Eliminar paciente (admin)
 
 🗓️ Turno:
- - [] Crear/agendar turno
+ - [X] Crear/agendar turno
 
- - [] Listar turnos por fecha o paciente
+ - [X] Listar turnos por especialidad y disponibilidad
 
  - [] Cancelar turno
 
