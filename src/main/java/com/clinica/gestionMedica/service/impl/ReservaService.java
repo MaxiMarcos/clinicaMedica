@@ -15,6 +15,7 @@ import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.repository.PrestacionRepository;
 import com.clinica.gestionMedica.repository.ReservaRepository;
 import com.clinica.gestionMedica.service.IReservaService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -88,10 +89,28 @@ public class ReservaService implements IReservaService {
         return reservaRepo.save(nuevaReserva);
     }
 
-    // método importante para el flujo de elegir turno
-    public List<Reserva> buscarPorEspecialidadDisponibilidad(PrestacionTiposEnum tipo){
+    public List<Reserva> buscarPorEspecialidadDisponibilidad(PrestacionRequestDTO prestacionRequestDTO){
 
-        return reservaRepo.findByPrestacion_TipoAndEstado(tipo, PresenciaEnum.DISPONIBLE);
+        Paciente paciente = pacienteRepository.findById(prestacionRequestDTO.getPacienteId())
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + prestacionRequestDTO.getPacienteId()));
+
+        boolean cubierto = false;
+
+        if (paciente.getObraSocial() == ObraSocialEnum.IOSFA && (prestacionRequestDTO.getTipo() == PrestacionTiposEnum.CONSULTA_GENERAL ||
+                prestacionRequestDTO.getTipo() == PrestacionTiposEnum.ECOGRAFIA)) {
+            cubierto = true;
+        } else if (paciente.getObraSocial() == ObraSocialEnum.OSDE) {
+            cubierto = true;
+        } else if (paciente.getObraSocial() == ObraSocialEnum.NINGUNA &&
+                prestacionRequestDTO.getTipo() == PrestacionTiposEnum.CONSULTA_GENERAL) {
+            cubierto = true;
+        }
+
+        if (cubierto) {
+            return reservaRepo.findByPrestacion_TipoAndEstado(prestacionRequestDTO.getTipo(), PresenciaEnum.DISPONIBLE);
+        } else {
+            throw new IllegalArgumentException("Su obra social no cubre el estudio. Comuníquese con administración."); // cambiar a una excepción personalizada
+        }
     }
 
 

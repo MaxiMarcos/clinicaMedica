@@ -6,7 +6,9 @@ import com.clinica.gestionMedica.entity.Paciente;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PacienteMapper {
@@ -25,7 +27,9 @@ public class PacienteMapper {
                 .nombre(paciente.getNombre())
                 .apellido(paciente.getApellido())
                 .telefono(paciente.getTelefono())
-                .historial(reservaMapper.ListaHistorialDto(paciente.getListaReservas()))
+                .historial(reservaMapper.ListaHistorialDto(
+                        Optional.ofNullable(paciente.getListaReservas()).orElse(Collections.emptyList())
+                ))
                 .build();
     }
 

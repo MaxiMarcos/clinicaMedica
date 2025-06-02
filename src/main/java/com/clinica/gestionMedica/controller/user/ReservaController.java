@@ -55,8 +55,8 @@ public class ReservaController {
     }
 
     @GetMapping("/traer/filtro")
-    public ResponseEntity<?> traerReservasPorEspecialidadYDisponibilidad(@RequestBody PrestacionTiposEnum tipo){
-        List<Reserva> reservas = reservaService.buscarPorEspecialidadDisponibilidad(tipo);
+    public ResponseEntity<?> traerReservasPorEspecialidadYDisponibilidad(@RequestBody PrestacionRequestDTO prestacionRequestDTO){
+        List<Reserva> reservas = reservaService.buscarPorEspecialidadDisponibilidad(prestacionRequestDTO);
 
         if(reservas != null){
             return ResponseEntity.status(HttpStatus.OK).body(reservas);

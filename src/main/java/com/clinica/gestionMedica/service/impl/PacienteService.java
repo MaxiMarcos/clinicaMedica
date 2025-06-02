@@ -33,7 +33,7 @@ public class PacienteService implements IPacienteService {
         if (pacientePorDni != null) {
             throw new IllegalStateException("Ya existe un paciente creado con este DNI." );
         }
-        PacienteDto pacienteDto = pacienteMapper.conversionAPacienteDto(pacientePorDni);
+        PacienteDto pacienteDto = pacienteMapper.conversionAPacienteDto(paciente);
         pacienteRepo.save(paciente);
         return pacienteDto;
     }
