@@ -54,24 +54,18 @@ Swagger UI: http://localhost:9001/swagger-ui/index.html
  - [] Eliminar paciente (admin)
 
 🗓️ Turno:
- - [X] Crear/agendar turno
+ - [X] Tomar turno turno (paciente)
 
- - [X] Listar turnos por especialidad y disponibilidad
+ - [X] Listar turnos por especialidad y disponibilidad (paciente)
+ - 
+ - [X] Validaciones para listar turnos según obra social del paciente
 
- - [] Cancelar turno
+ - [] Cancelar turno (paciente)
 
  - [] Validar disponibilidad (evitar superposición de turnos)
 
-📄 Consulta médica:
- - [] Crear consulta (al final del turno)
-
- - [] Listar consultas por paciente
-
- - [] Ver detalle de una consulta
 
 👨‍⚕️ Médico:
- - [] Crear médico
+ - [x] Crear médico
 
  - [] Listar médicos
-
- - [] Consultar disponibilidad

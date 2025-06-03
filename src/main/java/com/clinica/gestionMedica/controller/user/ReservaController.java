@@ -5,6 +5,7 @@ import com.clinica.gestionMedica.dto.ReservaDto;
 import com.clinica.gestionMedica.entity.Reserva;
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import com.clinica.gestionMedica.service.impl.ReservaService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reserva")
+@RequestMapping("/turno")
 public class ReservaController {
 
     @Autowired
@@ -30,10 +31,14 @@ public class ReservaController {
         }
     }
 
-    // se genera reserva con prestaciones
-    @PutMapping("/obtener-turno")
-    public ResponseEntity<?> agregarPrestacionEnReserva(@PathVariable  Long pacienteId,
-                                                        @RequestParam Long reservaId){
+    @Operation(
+            summary = "Adquirir turno",
+            description = "Paciente elige un turno disponible y lo adquiere, vinculando su id con el turno."
+    )
+    @PutMapping("/pacientes/{pacienteId}/reservas/{reservaId}")
+    public ResponseEntity<?> agregarPrestacionEnReserva(@PathVariable Long pacienteId,
+                                                        @PathVariable Long reservaId) {
+
         ReservaDto reservaDto = reservaService.agregarPrestacionEnReserva(pacienteId, reservaId);
 
         if(reservaDto != null){

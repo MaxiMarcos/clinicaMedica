@@ -16,6 +16,7 @@ import com.clinica.gestionMedica.repository.PrestacionRepository;
 import com.clinica.gestionMedica.repository.ReservaRepository;
 import com.clinica.gestionMedica.service.IReservaService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,11 +30,13 @@ public class ReservaService implements IReservaService {
     private final ReservaRepository reservaRepo;
     private final ReservaMapper reservaMapper;
     private final PacienteRepository pacienteRepository;
+    private final EmailService emailService;
 
-    public ReservaService(ReservaRepository reservaRepo, ReservaMapper reservaMapper, PacienteRepository pacienteRepository) {
+    public ReservaService(ReservaRepository reservaRepo, ReservaMapper reservaMapper, PacienteRepository pacienteRepository, EmailService emailService) {
         this.reservaRepo = reservaRepo;
         this.reservaMapper = reservaMapper;
         this.pacienteRepository = pacienteRepository;
+        this.emailService = emailService;
     }
 
     //metodo admin
@@ -46,34 +49,23 @@ public class ReservaService implements IReservaService {
     // metodo paciente
     public ReservaDto agregarPrestacionEnReserva(Long pacienteId, Long reservaId) {
 
-        Paciente paciente = pacienteRepository.findById(pacienteId).orElse(null);
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + pacienteId));
 
-        if(paciente == null){
-            throw new IllegalArgumentException("El paciente no existe");
-        }
+        Reserva reserva = reservaRepo.findById(reservaId)
+                .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada con ID: " + reservaId));
 
-        Reserva reserva = reservaRepo.findById(reservaId).orElse(null);
-        if (reserva != null) {
-            throw new IllegalArgumentException("No se encuentra el turno seleccionado");
-        }
+        this.validarTurnoParaPaciente(reserva, paciente);
 
         reserva.setPaciente(paciente);
         reserva.setEstado(PresenciaEnum.RESERVADO);
-
-
-        if(paciente.getObraSocial() != ObraSocialEnum.NINGUNA){
-           reserva.setPrecioTotal(0);
-        } else{
-            reserva.setPrecioTotal(reserva.getPrestacion().getPrecio());
-        }
-
         reservaRepo.save(reserva);
 
         ReservaDto reservaDto = reservaMapper.conversionADto(reserva);
 
-        return reservaDto;
+        this.emailPersonalizado(paciente, reservaDto);
 
-        // agregar tipos de descuentos
+        return reservaDto;
     }
 
     @Override
@@ -89,10 +81,32 @@ public class ReservaService implements IReservaService {
         return reservaRepo.save(nuevaReserva);
     }
 
+    public void validarTurnoParaPaciente(Reserva reserva, Paciente paciente) {
+        if (reserva.getEstado() != PresenciaEnum.DISPONIBLE) {
+            throw new IllegalArgumentException("Este turno ya no está disponible.");
+        }
+
+        PrestacionTiposEnum tipo = reserva.getPrestacion().getTipo();
+        ObraSocialEnum obra = paciente.getObraSocial();
+
+        if (obra == ObraSocialEnum.NINGUNA) {
+            throw new IllegalArgumentException("Necesita una obra social para reservar este turno.");
+        }
+
+        boolean cubierto =
+                (obra == ObraSocialEnum.IOSFA && (tipo == PrestacionTiposEnum.CONSULTA_GENERAL || tipo == PrestacionTiposEnum.ECOGRAFIA))
+                        || obra == ObraSocialEnum.OSDE;
+
+        if (!cubierto) {
+            throw new IllegalArgumentException("Su obra social no cubre este estudio.");
+        }
+    }
+
     public List<Reserva> buscarPorEspecialidadDisponibilidad(PrestacionRequestDTO prestacionRequestDTO){
 
         Paciente paciente = pacienteRepository.findById(prestacionRequestDTO.getPacienteId())
                 .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + prestacionRequestDTO.getPacienteId()));
+
 
         boolean cubierto = false;
 
@@ -134,5 +148,36 @@ public class ReservaService implements IReservaService {
     @Override
     public void eliminarReserva(Long id) {
         reservaRepo.deleteById(id);
+    }
+
+    private void emailPersonalizado(Paciente paciente, ReservaDto reservaDto){
+
+        // 2. Preparar el cuerpo del mail
+        String cuerpo = """
+Hola:
+
+Tu turno fue reservado con éxito.
+
+✅ Código: %d
+📅 Fecha: %s
+💰 Precio: %d
+📌 Estado: %s
+
+Por favor presentate 10 minutos antes.
+
+¡Gracias por confiar en nosotros!
+""".formatted(
+                reservaDto.getCodigoTurno(),
+                reservaDto.getFechaConsulta().toString(),
+                reservaDto.getPrecioTotal(),
+                reservaDto.getEstado()
+        );
+
+// 3. Enviar el correo
+        emailService.enviarCorreo(
+                paciente.getEmail(),
+                "Turno confirmado - Clínica Ejemplo",
+                cuerpo
+        );
     }
 }
