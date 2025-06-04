@@ -1,7 +1,7 @@
 package com.clinica.gestionMedica.dto;
 
 import com.clinica.gestionMedica.entity.Medico;
-import com.clinica.gestionMedica.entity.Reserva;
+import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import jakarta.persistence.*;

@@ -4,9 +4,9 @@ import com.clinica.gestionMedica.dto.PacienteDto;
 import com.clinica.gestionMedica.dto.PrestacionDto;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Prestacion;
-import com.clinica.gestionMedica.entity.Reserva;
+import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.mapper.PacienteMapper;
-import com.clinica.gestionMedica.mapper.ReservaMapper;
+import com.clinica.gestionMedica.mapper.TurnoMapper;
 import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.security.enumRole.RoleName;
 import com.clinica.gestionMedica.service.IPacienteService;
@@ -24,7 +24,7 @@ public class PacienteService implements IPacienteService {
     @Autowired
     PacienteMapper pacienteMapper;
     @Autowired
-    ReservaMapper reservaMapper;
+    TurnoMapper turnoMapper;
 
     @Override
     public PacienteDto crearPaciente(Paciente paciente) {
@@ -84,10 +84,10 @@ public class PacienteService implements IPacienteService {
     @Override
     public PacienteDto traerHistorial(Long id) {
         Paciente paciente = pacienteRepo.findById(id).orElse(null);
-        List<Reserva> reservas = paciente.getListaReservas();
+        List<Turno> turnos = paciente.getListaTurnos();
 
         PacienteDto pacienteDto = new PacienteDto();
-        pacienteDto.setHistorial(reservaMapper.ListaHistorialDto(reservas));
+        pacienteDto.setHistorial(turnoMapper.ListaHistorialDto(turnos));
         pacienteDto.setNombre(paciente.getNombre());
         pacienteDto.setDni(paciente.getDni());
         pacienteDto.setApellido(paciente.getApellido());

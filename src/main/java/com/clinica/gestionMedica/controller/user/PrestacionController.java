@@ -15,17 +15,6 @@ public class PrestacionController {
     @Autowired
     PrestacionService prestacionService;
 
-    @PostMapping("/obtener-turno")
-    public ResponseEntity<?> crearPrestacionCliente(@RequestBody Prestacion prestacion) {
-
-        Prestacion nuevaPrestacion = prestacionService.crearPrestacion(prestacion);
-
-        if (nuevaPrestacion != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPrestacion);
-        } else {
-            return ResponseEntity.badRequest().body("Error al crear la prestación. Verifique los datos enviados.");
-        }
-    }
 
     @GetMapping("traer/{id}")
     public ResponseEntity<?> traerPrestacionDto(@PathVariable Long id){

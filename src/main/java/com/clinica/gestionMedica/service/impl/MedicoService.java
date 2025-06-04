@@ -1,12 +1,10 @@
 package com.clinica.gestionMedica.service.impl;
 
 import com.clinica.gestionMedica.entity.Medico;
-import com.clinica.gestionMedica.entity.Paciente;
-import com.clinica.gestionMedica.enums.MedicoEstadoEnum;
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.excepciones.medico.MedicoYaExisteException;
 import com.clinica.gestionMedica.repository.MedicoRepository;
 import com.clinica.gestionMedica.service.IMedicoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +12,19 @@ import java.util.List;
 @Service
 public class MedicoService implements IMedicoService {
 
-    @Autowired
-    MedicoRepository medicoRepo;
+    private final MedicoRepository medicoRepo;
+
+    public MedicoService(MedicoRepository medicoRepo) {
+        this.medicoRepo = medicoRepo;
+    }
 
     @Override
     public Medico crearMedico(Medico medico) {
+
+        Medico medicoExiste = medicoRepo.findByDni(medico.getDni());
+        if (medicoExiste != null) {
+            throw new MedicoYaExisteException("Ya existe un médico creado con este DNI.");
+        }
         return medicoRepo.save(medico);
     }
 

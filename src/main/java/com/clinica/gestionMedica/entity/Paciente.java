@@ -24,5 +24,5 @@ public class Paciente extends Persona {
     @Enumerated(EnumType.STRING)
     private ObraSocialEnum obraSocial;
     @OneToMany(mappedBy = "paciente")
-    private List<Reserva> listaReservas;
+    private List<Turno> listaTurnos;
 }

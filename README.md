@@ -31,9 +31,9 @@ Swagger UI: http://localhost:9001/swagger-ui/index.html
 | POST | `/register-customer` | Registro de usuario       |
 | POST | `/login` | Login usuario       |
 | GET    | `/paciente/historial/{id}`    | Obtener historial de paciente         | 
-| POST    | `/reserva/crear` | Paciente inicia el proceso de compra         |
+| POST    | `/turno/crear` | Paciente inicia el proceso de compra         |
 | POST   | `/prestacion/obtener-turno `   | Elección de prestación          |
-| POST    | `/reserva/{pacienteId}/{prestacionId}` | Prestaciones se agregan al carrito      |
+| POST    | `/turno/{pacienteId}/{prestacionId}` | Prestaciones se agregan al carrito      |
 
 
 🧾 Registro/login:

@@ -1,7 +1,7 @@
 package com.clinica.gestionMedica.mapper;
 
 import com.clinica.gestionMedica.dto.PacienteDto;
-import com.clinica.gestionMedica.dto.ReservaDto;
+import com.clinica.gestionMedica.dto.TurnoDto;
 import com.clinica.gestionMedica.entity.Paciente;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +13,10 @@ import java.util.Optional;
 @Component
 public class PacienteMapper {
 
-    private final ReservaMapper reservaMapper;
+    private final TurnoMapper TurnoMapper;
 
-    public PacienteMapper(ReservaMapper reservaMapper) {
-        this.reservaMapper = reservaMapper;
+    public PacienteMapper(TurnoMapper TurnoMapper) {
+        this.TurnoMapper = TurnoMapper;
     }
 
     public PacienteDto conversionAPacienteDto(Paciente paciente){
@@ -27,8 +27,8 @@ public class PacienteMapper {
                 .nombre(paciente.getNombre())
                 .apellido(paciente.getApellido())
                 .telefono(paciente.getTelefono())
-                .historial(reservaMapper.ListaHistorialDto(
-                        Optional.ofNullable(paciente.getListaReservas()).orElse(Collections.emptyList())
+                .historial(TurnoMapper.ListaHistorialDto(
+                        Optional.ofNullable(paciente.getListaTurnos()).orElse(Collections.emptyList())
                 ))
                 .build();
     }

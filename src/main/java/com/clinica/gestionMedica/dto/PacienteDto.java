@@ -16,5 +16,5 @@ public class PacienteDto {
     private String dni;
     private String telefono;
     private String email;
-    private List<ReservaDto> historial;
+    private List<TurnoDto> historial;
 }

@@ -30,5 +30,5 @@ public class Medico extends Persona{
 
 
    // @OneToMany(mappedBy = "medico")
-   // private List<Reserva> listaReservas;
+   // private List<turno> listaTurnos;
 }
