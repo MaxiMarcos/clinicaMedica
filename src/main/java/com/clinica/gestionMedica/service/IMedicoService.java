@@ -2,9 +2,6 @@ package com.clinica.gestionMedica.service;
 
 import com.clinica.gestionMedica.dto.MedicoRequestDto;
 import com.clinica.gestionMedica.dto.MedicoResponseDto;
-import com.clinica.gestionMedica.entity.Medico;
-import com.clinica.gestionMedica.entity.Paciente;
-import com.clinica.gestionMedica.enums.MedicoEstadoEnum;
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 
 import java.util.List;

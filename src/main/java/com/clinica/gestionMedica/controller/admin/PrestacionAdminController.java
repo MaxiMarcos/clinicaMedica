@@ -13,32 +13,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/prestacion")
+@RequestMapping("/admin/prestaciones")
 @RequiredArgsConstructor
 public class PrestacionAdminController {
 
     private final PrestacionService prestacionService;
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<?> crearPrestacionAdmin(@Valid @RequestBody PrestacionRequestDto prestacionRequest) {
 
         PrestacionResponseDto prestacionResponse = prestacionService.crearPrestacion(prestacionRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(prestacionResponse);
     }
 
-    @GetMapping("traertodo")
+    @GetMapping
     public ResponseEntity<?> traerPrestaciones(){
 
         List<PrestacionResponseDto> prestacionesResponse = prestacionService.traerPrestaciones();
-
-        if (prestacionesResponse!= null) {
-            return ResponseEntity.status(HttpStatus.OK).body(prestacionesResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer prestaciones");
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(prestacionesResponse);
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @GetMapping("{id}")
+    public ResponseEntity<?> traerPrestacion(@PathVariable Long id){
+
+        PrestacionResponseDto PrestacionResponseDto = prestacionService.traerPrestacion(id);
+        return ResponseEntity.status(HttpStatus.OK).body(PrestacionResponseDto);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<?> editarPrestacion(Long id, PrestacionRequestDto prestacionRequest){
+        PrestacionResponseDto prestacionResponse = prestacionService.editarPrestacion(id, prestacionRequest);
+        return ResponseEntity.status(HttpStatus.OK).body("Prestación modificada correctamente " + prestacionResponse);
+    }
+
+    @DeleteMapping("{id}")
     public ResponseEntity<String> eliminarPrestacion(@PathVariable Long id) {
         prestacionService.eliminarPrestacion(id);
         return ResponseEntity.noContent().build();

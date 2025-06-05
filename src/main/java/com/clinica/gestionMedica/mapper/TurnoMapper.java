@@ -55,6 +55,8 @@ public class TurnoMapper {
 
     public List<Turno> conversionResponsesATurnos(List<TurnoResponseDto> turnosResponse){
 
+        if (turnosResponse == null) return new ArrayList<>();
+
         List<Turno> turnos= new ArrayList<>();
         for(TurnoResponseDto t : turnosResponse){
             turnos.add(conversionResponseATurno(t));

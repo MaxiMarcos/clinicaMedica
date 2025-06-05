@@ -39,15 +39,15 @@ public class MedicoService implements IMedicoService {
         Medico medico = medicoRepo.findById(id)
                 .orElseThrow(() -> new MedicoNoEncontradoException("Médico no encontrado con id: " + id));
 
-        medico.setApellido(medicoRequest.getApellido());
-        medico.setNombre(medicoRequest.getNombre());
-        medico.setFecha_nacimiento(medicoRequest.getFecha_nacimiento());
-        medico.setDni(medicoRequest.getDni());
-        medico.setTelefono(medicoRequest.getTelefono());
-        medico.setDireccion(medicoRequest.getDireccion());
-        medico.setEmail(medicoRequest.getEmail());
-        medico.setSueldo(medicoRequest.getSueldo());
-        medico.setEspecializacion(medicoRequest.getEspecializacion());
+        if (medicoRequest.getApellido() != null) medico.setApellido(medicoRequest.getApellido());
+        if (medicoRequest.getNombre() != null) medico.setNombre(medicoRequest.getNombre());
+        if (medicoRequest.getFecha_nacimiento() != null) medico.setFecha_nacimiento(medicoRequest.getFecha_nacimiento());
+        if (medicoRequest.getDni() != null) medico.setDni(medicoRequest.getDni());
+        if (medicoRequest.getTelefono() != null) medico.setTelefono(medicoRequest.getTelefono());
+        if (medicoRequest.getDireccion() != null) medico.setDireccion(medicoRequest.getDireccion());
+        if (medicoRequest.getEmail() != null) medico.setEmail(medicoRequest.getEmail());
+        if (medicoRequest.getSueldo() != null) medico.setSueldo(medicoRequest.getSueldo());
+        if (medicoRequest.getEspecializacion() != null) medico.setEspecializacion(medicoRequest.getEspecializacion());
 
         medicoRepo.save(medico);
         return medicoMapper.convertirMedicoAResponse(medico);

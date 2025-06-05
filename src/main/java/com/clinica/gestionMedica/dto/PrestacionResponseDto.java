@@ -1,6 +1,7 @@
 package com.clinica.gestionMedica.dto;
 
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Getter
@@ -8,10 +9,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PrestacionResponseDto {
 
     private Long id;
     private String descripcion;
-    private int precio;
+    private Integer precio;
     private PrestacionTiposEnum tipo;
 }

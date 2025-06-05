@@ -42,9 +42,9 @@ public class PrestacionService implements IPrestacionService {
 
         Prestacion prestacion = prestacionRepo.findById(id)
                 .orElseThrow(() -> new PrestacionNoEncontradaException("Prestacion no encontrada con id: " + id));
-        prestacion.setTipo(prestacion.getTipo());
-        prestacion.setDescripcion(prestacion.getDescripcion());
-        prestacion.setPrecio(prestacion.getPrecio());
+        if(prestacionRequest.getTipo() != null) prestacion.setTipo(prestacionRequest.getTipo());
+        if(prestacionRequest.getDescripcion() != null) prestacion.setDescripcion(prestacionRequest.getDescripcion());
+        if(prestacionRequest.getPrecio() != null) prestacion.setPrecio(prestacionRequest.getPrecio());
 
         return prestacionMapper.conversionPrestacionAResponse(prestacion);
     }

@@ -15,6 +15,6 @@ public interface IPacienteService {
     PacienteResponseDto traerPacientePorDni(String dni);
     List<PacienteResponseDto> traerPacientes();
     void eliminarPaciente(Long id);
-    List<TurnoResponseDto> traerHistorial(Long id);
+    List<TurnoResponseDto> traerHistorial(String dni);
 
 }

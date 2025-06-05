@@ -46,13 +46,13 @@ public class PacienteService implements IPacienteService {
         Paciente paciente = pacienteRepo.findById(id)
                 .orElseThrow(() -> new PacienteNoEncontradoException("Paciente no encontrado con id: " + id));
 
-        paciente.setApellido(pacienteRequest.getApellido());
-        paciente.setNombre(pacienteRequest.getNombre());
-        paciente.setFecha_nacimiento(pacienteRequest.getFecha_nacimiento());
-        paciente.setDni(pacienteRequest.getDni());
-        paciente.setTelefono(pacienteRequest.getTelefono());
-        paciente.setDireccion(pacienteRequest.getDireccion());
-        paciente.setEmail(pacienteRequest.getEmail());
+        if(pacienteRequest.getApellido() != null) paciente.setApellido(pacienteRequest.getApellido());
+        if(pacienteRequest.getNombre() != null) paciente.setNombre(pacienteRequest.getNombre());
+        if(pacienteRequest.getFecha_nacimiento() != null) paciente.setFecha_nacimiento(pacienteRequest.getFecha_nacimiento());
+        if(pacienteRequest.getDni() != null) paciente.setDni(pacienteRequest.getDni());
+        if(pacienteRequest.getTelefono() != null) paciente.setTelefono(pacienteRequest.getTelefono());
+        if(pacienteRequest.getDireccion() != null) paciente.setDireccion(pacienteRequest.getDireccion());
+        if(pacienteRequest.getEmail() !=null) paciente.setEmail(pacienteRequest.getEmail());
 
         pacienteRepo.save(paciente);
         return pacienteMapper.conversionPacienteAResponseDto(paciente);
@@ -84,8 +84,8 @@ public class PacienteService implements IPacienteService {
     }
 
     @Override
-    public List<TurnoResponseDto> traerHistorial(Long id) {
-        Paciente paciente = pacienteRepo.findById(id).orElse(null);
+    public List<TurnoResponseDto> traerHistorial(String dni) {
+        Paciente paciente = pacienteRepo.findByDni(dni);
         List<Turno> turnos = paciente.getListaTurnos();
         List<TurnoResponseDto> turnosResponse = turnoMapper.conversionTurnosAResponse(turnos);
         return turnosResponse;

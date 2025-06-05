@@ -20,5 +20,5 @@ public class Prestacion {
     private PrestacionTiposEnum tipo;
 
     private String descripcion;
-    private int precio;
+    private Integer precio;
 }

@@ -1,6 +1,7 @@
 package com.clinica.gestionMedica.dto;
 
 import com.clinica.gestionMedica.enums.PresenciaEnum;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TurnoResponseDto {
 
     private Long id;

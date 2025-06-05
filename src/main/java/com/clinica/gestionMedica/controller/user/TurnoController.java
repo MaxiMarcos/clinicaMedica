@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/turno")
+@RequestMapping("/reserva")
 @RequiredArgsConstructor
 public class TurnoController {
 
@@ -29,29 +29,18 @@ public class TurnoController {
     public ResponseEntity<?> reservarTurno(@PathVariable Long pacienteId, @PathVariable Long turnoId) {
 
         TurnoResponseDto turnoResponseDto = turnoService.reservarTurno(pacienteId, turnoId);
-
-        if(turnoResponseDto != null){
-            return ResponseEntity.status(HttpStatus.CREATED).body(turnoResponseDto);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear el turno");
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(turnoResponseDto);
     }
 
-    @GetMapping("/traer/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> traerTurno(@PathVariable Long id){
         TurnoResponseDto turnoResponse = turnoService.traerTurno(id);
-
         return ResponseEntity.status(HttpStatus.OK).body(turnoResponse);
     }
 
-    @GetMapping("/traer/filtro")
+    @GetMapping("/filtro")
     public ResponseEntity<?> traerTurnosPorEspecialidadYDisponibilidad(@RequestBody TurnoBusquedaRequestDto requestDto){
         List<Turno> turnos = turnoService.buscarPorEspecialidadDisponibilidad(requestDto);
-
-        if(turnos != null){
-            return ResponseEntity.status(HttpStatus.OK).body(turnos);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer Turnos");
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(turnos);
     }
 }

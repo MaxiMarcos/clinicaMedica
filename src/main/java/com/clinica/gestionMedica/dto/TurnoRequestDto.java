@@ -6,6 +6,7 @@ import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.enums.PresenciaEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TurnoRequestDto {
 
-    @NotBlank
+    @Min(1)
     private int codigoTurno;
     @NotNull
     private LocalDateTime fechaConsulta;

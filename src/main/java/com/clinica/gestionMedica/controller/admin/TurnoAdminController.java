@@ -13,34 +13,39 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/turno")
+@RequestMapping("/admin/turnos")
 @RequiredArgsConstructor
 public class TurnoAdminController {
 
     private final TurnoService turnoService;
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<?> crearTurno(@Valid @RequestBody TurnoRequestDto turnoRequest){
 
         TurnoResponseDto turno = turnoService.crearTurno(turnoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(turno);
-
     }
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<?> editarTurno(@PathVariable Long id,@RequestBody TurnoRequestDto turnoRequestDto){
 
         TurnoResponseDto turnoResponse = turnoService.editarTurno(id, turnoRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body("Turno modificadda exitosamente "+ turnoResponse);
     }
 
-    @GetMapping("/traertodo")
+    @GetMapping
     public ResponseEntity<?> traerTurnos(){
         List<TurnoResponseDto> turnos = turnoService.traerTurnos();
         return ResponseEntity.status(HttpStatus.OK).body(turnos);
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> traerTurno(@PathVariable Long id){
+        TurnoResponseDto turnoResponse = turnoService.traerTurno(id);
+        return ResponseEntity.status(HttpStatus.OK).body(turnoResponse);
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarTurno(Long id){
         turnoService.eliminarTurno(id);
         return ResponseEntity.status(HttpStatus.OK).body("Se eliminó exitosamente el turno con ID: "+ id);

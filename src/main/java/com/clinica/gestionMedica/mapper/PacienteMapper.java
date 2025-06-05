@@ -40,6 +40,9 @@ public class PacienteMapper {
                 .email(pacienteRequest.getEmail())
                 .nombre(pacienteRequest.getNombre())
                 .apellido(pacienteRequest.getApellido())
+                .fecha_nacimiento(pacienteRequest.getFecha_nacimiento())
+                .direccion(pacienteRequest.getDireccion())
+                .obraSocial(pacienteRequest.getObraSocial())
                 .telefono(pacienteRequest.getTelefono())
                 .listaTurnos(TurnoMapper.conversionResponsesATurnos(pacienteRequest.getHistorial()))
                 .build();

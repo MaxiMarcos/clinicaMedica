@@ -14,22 +14,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/paciente")
+@RequestMapping("/pacientes")
 @RequiredArgsConstructor
 public class PacienteController {
 
     private final PacienteService pacienteService;
 
-    @GetMapping("/historial/{id}") // probablemente deba modificar para poder usar #id == authentication.principal.id"
-    public ResponseEntity<?> historialPaciente(@PathVariable Long id){
+    @GetMapping("/historial/{dni}")
+    public ResponseEntity<?> historialPaciente(@PathVariable String dni){
 
-        List<TurnoResponseDto> historial = pacienteService.traerHistorial(id);
+        List<TurnoResponseDto> historial = pacienteService.traerHistorial(dni);
         return ResponseEntity.status(HttpStatus.OK).body(historial);
 
     }
 
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<?> editarPaciente(@PathVariable Long id, @RequestBody PacienteRequestDto pacienteRequest){
 
         PacienteResponseDto pacienteEditado = pacienteService.editarPaciente(id, pacienteRequest);

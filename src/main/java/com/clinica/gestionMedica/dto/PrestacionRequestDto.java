@@ -17,6 +17,6 @@ public class PrestacionRequestDto {
     private PrestacionTiposEnum tipo;
     @NotBlank
     private String descripcion;
-    @NotBlank
-    private int precio;
+    @NotNull
+    private Integer precio;
 }

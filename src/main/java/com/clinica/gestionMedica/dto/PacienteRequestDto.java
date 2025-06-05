@@ -31,6 +31,6 @@ public class PacienteRequestDto {
     private String email;
     @NotNull
     private ObraSocialEnum obraSocial;
-    @NotNull
+    //@NotNull
     private List<TurnoResponseDto> historial;
 }

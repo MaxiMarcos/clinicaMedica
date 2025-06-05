@@ -60,14 +60,14 @@ public class TurnoService implements ITurnoService {
     }
 
     @Override
-    public TurnoResponseDto editarTurno(Long id, TurnoRequestDto turnoRequestDto) {
+    public TurnoResponseDto editarTurno(Long id, TurnoRequestDto turnoRequest) {
         Turno turno = turnoRepo.findById(id)
                 .orElseThrow(() -> new TurnoNoEncontradoException("Turno no encontrado con id: " + id));
-        turno.setPaciente(turno.getPaciente());
-        turno.setEstado(turno.getEstado());
-        turno.setPrestacion(turno.getPrestacion());
-        turno.setFechaConsulta(turno.getFechaConsulta());
-        turno.setMedico(turno.getMedico());
+        if(turnoRequest.getPaciente() != null) turno.setPaciente(turno.getPaciente());
+        if(turnoRequest.getEstado() != null) turno.setEstado(turno.getEstado());
+        if(turnoRequest.getPrestacion() != null) turno.setPrestacion(turno.getPrestacion());
+        if(turnoRequest.getFechaConsulta() != null) turno.setFechaConsulta(turno.getFechaConsulta());
+        if(turnoRequest.getMedico() != null) turno.setMedico(turno.getMedico());
         turnoRepo.save(turno);
 
         return turnoMapper.conversionTurnoAResponse(turno);
@@ -83,7 +83,7 @@ public class TurnoService implements ITurnoService {
         ObraSocialEnum obra = paciente.getObraSocial();
 
         if (obra == ObraSocialEnum.NINGUNA) {
-            throw new IllegalArgumentException("Necesita una obra social para Turnor este turno.");
+            throw new IllegalArgumentException("Necesita una obra social para Reservar este turno.");
         }
 
         boolean cubierto =
