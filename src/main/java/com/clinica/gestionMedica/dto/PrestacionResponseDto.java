@@ -3,17 +3,15 @@ package com.clinica.gestionMedica.dto;
 import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PrestacionRequestDTO {
+public class PrestacionResponseDto {
 
-    private Long pacienteId;
-    private Long TurnoId;
+    private Long id;
+    private String descripcion;
+    private int precio;
     private PrestacionTiposEnum tipo;
-    //private List<Long> prestacionId;
 }

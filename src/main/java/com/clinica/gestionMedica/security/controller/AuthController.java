@@ -9,6 +9,7 @@ import com.clinica.gestionMedica.security.dto.RegisterRequest;
 import com.clinica.gestionMedica.security.enumRole.RoleName;
 import com.clinica.gestionMedica.security.repository.UserRepository;
 import com.clinica.gestionMedica.security.service.impl.AuthServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class AuthController {
     UserRepository userRepo;
 
     @PostMapping("/register")
-    public ResponseEntity<TokenResponse> registerCustomer(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<TokenResponse> registerCustomer(@Valid @RequestBody RegisterRequest registerRequest) {
 
         final TokenResponse token = authService.register(registerRequest, RoleName.CUSTOMER);
 
@@ -37,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping("/admin/register")
-    public ResponseEntity<TokenResponse> registerAdmin(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<TokenResponse> registerAdmin(@Valid @RequestBody RegisterRequest registerRequest) {
 
         final TokenResponse token = authService.register(registerRequest, RoleName.ADMIN);
 

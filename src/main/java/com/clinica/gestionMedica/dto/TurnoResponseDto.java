@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TurnoDto {
+public class TurnoResponseDto {
 
-
+    private Long id;
     private int precioTotal;
     private int codigoTurno;
     private LocalDateTime fechaConsulta;

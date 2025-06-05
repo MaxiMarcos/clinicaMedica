@@ -1,18 +1,20 @@
 package com.clinica.gestionMedica.service;
 
-import com.clinica.gestionMedica.dto.PacienteDto;
+import com.clinica.gestionMedica.dto.PacienteRequestDto;
+import com.clinica.gestionMedica.dto.PacienteResponseDto;
+import com.clinica.gestionMedica.dto.TurnoResponseDto;
 import com.clinica.gestionMedica.entity.Paciente;
 
 import java.util.List;
 
 public interface IPacienteService {
 
-    PacienteDto crearPaciente(Paciente paciente);
-    PacienteDto editarPaciente(Long id, Paciente paciente);
-    PacienteDto traerPaciente(Long id);
-    PacienteDto traerPacientePorDni(String dni);
-    List<Paciente> traerPacientes();
+    PacienteResponseDto crearPaciente(PacienteRequestDto pacienteRequest);
+    PacienteResponseDto editarPaciente(Long id, PacienteRequestDto pacienteRequest);
+    PacienteResponseDto traerPaciente(Long id);
+    PacienteResponseDto traerPacientePorDni(String dni);
+    List<PacienteResponseDto> traerPacientes();
     void eliminarPaciente(Long id);
-    PacienteDto traerHistorial(Long id);
+    List<TurnoResponseDto> traerHistorial(Long id);
 
 }

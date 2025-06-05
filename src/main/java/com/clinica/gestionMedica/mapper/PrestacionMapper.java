@@ -1,42 +1,52 @@
 package com.clinica.gestionMedica.mapper;
 
-import com.clinica.gestionMedica.dto.MedicoDto;
-import com.clinica.gestionMedica.dto.PacienteDto;
-import com.clinica.gestionMedica.dto.PrestacionDto;
+import com.clinica.gestionMedica.dto.MedicoResponseDto;
+import com.clinica.gestionMedica.dto.PrestacionRequestDto;
+import com.clinica.gestionMedica.dto.PrestacionResponseDto;
 import com.clinica.gestionMedica.entity.Medico;
-import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Prestacion;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class PrestacionMapper {
 
-    public MedicoDto conversionMedicoDto(Medico medico) {
-        return new MedicoDto(medico.getId(), medico.getNombre(), medico.getApellido());
-    }
+    public PrestacionResponseDto conversionPrestacionAResponse(Prestacion prestacion){
 
-    public Medico conversionMedico(MedicoDto medicoDto) {
-        Medico medico = new Medico();
-        medico.setId(medicoDto.getId()); // ahora lo tenés disponible
-        return medico;
-    }
-
-
-    public PrestacionDto conversionAPrestacionDto(Prestacion prestacion){
-
-        return PrestacionDto.builder()
+        return PrestacionResponseDto.builder()
                 .tipo(prestacion.getTipo())
                 .descripcion(prestacion.getDescripcion())
                 .precio(prestacion.getPrecio())
                 .build();
     }
 
-    public Prestacion conversionAPrestacion(PrestacionDto prestacionDto){
+    public PrestacionResponseDto conversionRequestAResponse(PrestacionRequestDto prestacionRequest){
 
-        return Prestacion.builder()
-                .tipo(prestacionDto.getTipo())
-                .descripcion(prestacionDto.getDescripcion())
-                .precio(prestacionDto.getPrecio())
+        return PrestacionResponseDto.builder()
+                .tipo(prestacionRequest.getTipo())
+                .descripcion(prestacionRequest.getDescripcion())
+                .precio(prestacionRequest.getPrecio())
                 .build();
     }
+
+    public Prestacion conversionRequestAPrestacion(PrestacionRequestDto prestacionRequest){
+
+        return Prestacion.builder()
+                .tipo(prestacionRequest.getTipo())
+                .descripcion(prestacionRequest.getDescripcion())
+                .precio(prestacionRequest.getPrecio())
+                .build();
+    }
+
+    public List<PrestacionResponseDto> conversionPrestacionesAResponse(List<Prestacion> prestaciones){
+        List<PrestacionResponseDto> prestacionesResponse = new ArrayList<>();
+
+        for(Prestacion p : prestaciones){
+            prestacionesResponse.add(conversionPrestacionAResponse(p));
+        }
+        return prestacionesResponse;
+    }
+
 }

@@ -1,100 +1,94 @@
 package com.clinica.gestionMedica.service.impl;
 
-import com.clinica.gestionMedica.dto.PacienteDto;
-import com.clinica.gestionMedica.dto.PrestacionDto;
+import com.clinica.gestionMedica.dto.PacienteRequestDto;
+import com.clinica.gestionMedica.dto.PacienteResponseDto;
+import com.clinica.gestionMedica.dto.TurnoResponseDto;
+import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
-import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Turno;
+import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
+import com.clinica.gestionMedica.excepciones.paciente.PacienteNoEncontradoException;
 import com.clinica.gestionMedica.mapper.PacienteMapper;
 import com.clinica.gestionMedica.mapper.TurnoMapper;
 import com.clinica.gestionMedica.repository.PacienteRepository;
-import com.clinica.gestionMedica.security.enumRole.RoleName;
 import com.clinica.gestionMedica.service.IPacienteService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PacienteService implements IPacienteService {
 
-    @Autowired
-    PacienteRepository pacienteRepo;
-    @Autowired
-    PacienteMapper pacienteMapper;
-    @Autowired
-    TurnoMapper turnoMapper;
+    private final PacienteRepository pacienteRepo;
+    private final PacienteMapper pacienteMapper;
+    private final TurnoMapper turnoMapper;
 
     @Override
-    public PacienteDto crearPaciente(Paciente paciente) {
+    public PacienteResponseDto crearPaciente(PacienteRequestDto pacienteRequest) {
 
-        Paciente pacientePorDni = pacienteRepo.findByDni(paciente.getDni());
+        Paciente pacientePorDni = pacienteRepo.findByDni(pacienteRequest.getDni());
         if (pacientePorDni != null) {
             throw new IllegalStateException("Ya existe un paciente creado con este DNI." );
         }
-        PacienteDto pacienteDto = pacienteMapper.conversionAPacienteDto(paciente);
+        Paciente paciente = pacienteMapper.conversionRequestAPaciente(pacienteRequest);
         pacienteRepo.save(paciente);
-        return pacienteDto;
+
+        return pacienteMapper.conversionPacienteAResponseDto(paciente);
     }
 
 
     @Override
-    public PacienteDto editarPaciente(Long id, Paciente paciente) {
+    public PacienteResponseDto editarPaciente(Long id, PacienteRequestDto pacienteRequest) {
 
-        Paciente nuevoPaciente = pacienteRepo.findById(id).orElse(null);
-        nuevoPaciente.setApellido(paciente.getApellido());
-        nuevoPaciente.setNombre(paciente.getNombre());
-        nuevoPaciente.setFecha_nacimiento(paciente.getFecha_nacimiento());
-        nuevoPaciente.setDni(paciente.getDni());
-        nuevoPaciente.setTelefono(paciente.getTelefono());
-        nuevoPaciente.setDireccion(paciente.getDireccion());
-        nuevoPaciente.setEmail(paciente.getEmail());
-
-        pacienteRepo.save(nuevoPaciente);
-        return pacienteMapper.conversionAPacienteDto(nuevoPaciente);
-    }
-
-    @Override
-    public PacienteDto traerPaciente(Long id) {
         Paciente paciente = pacienteRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paciente con ID " + id + " no encontrado"));
+                .orElseThrow(() -> new PacienteNoEncontradoException("Paciente no encontrado con id: " + id));
 
-        PacienteDto pacienteDto = pacienteMapper.conversionAPacienteDto(paciente);
-        return pacienteDto;
+        paciente.setApellido(pacienteRequest.getApellido());
+        paciente.setNombre(pacienteRequest.getNombre());
+        paciente.setFecha_nacimiento(pacienteRequest.getFecha_nacimiento());
+        paciente.setDni(pacienteRequest.getDni());
+        paciente.setTelefono(pacienteRequest.getTelefono());
+        paciente.setDireccion(pacienteRequest.getDireccion());
+        paciente.setEmail(pacienteRequest.getEmail());
+
+        pacienteRepo.save(paciente);
+        return pacienteMapper.conversionPacienteAResponseDto(paciente);
     }
 
     @Override
-    public PacienteDto traerPacientePorDni(String dni) {
-        PacienteDto pacienteDto = pacienteMapper.conversionAPacienteDto(pacienteRepo.findByDni(dni));
-        return pacienteDto;
+    public PacienteResponseDto traerPaciente(Long id) {
+        Paciente paciente = pacienteRepo.findById(id)
+                .orElseThrow(() -> new PacienteNoEncontradoException("Paciente no encontrado con id: " + id));
+
+        return pacienteMapper.conversionPacienteAResponseDto(paciente);
     }
 
     @Override
-    public List<Paciente> traerPacientes() {
-        return pacienteRepo.findAll();
+    public PacienteResponseDto traerPacientePorDni(String dni) {
+        return pacienteMapper.conversionPacienteAResponseDto(pacienteRepo.findByDni(dni));
+    }
+
+    @Override
+    public List<PacienteResponseDto> traerPacientes() {
+        return pacienteMapper.conversionPacientesAResponse(pacienteRepo.findAll());
     }
 
     @Override
     public void eliminarPaciente(Long id) {
-
-        pacienteRepo.deleteById(id);
+        Paciente paciente = pacienteRepo.findById(id)
+                .orElseThrow(() -> new PacienteNoEncontradoException("Paciente no encontrado con id: " + id));
+        pacienteRepo.deleteById(paciente.getId());
     }
 
     @Override
-    public PacienteDto traerHistorial(Long id) {
+    public List<TurnoResponseDto> traerHistorial(Long id) {
         Paciente paciente = pacienteRepo.findById(id).orElse(null);
         List<Turno> turnos = paciente.getListaTurnos();
-
-        PacienteDto pacienteDto = new PacienteDto();
-        pacienteDto.setHistorial(turnoMapper.ListaHistorialDto(turnos));
-        pacienteDto.setNombre(paciente.getNombre());
-        pacienteDto.setDni(paciente.getDni());
-        pacienteDto.setApellido(paciente.getApellido());
-        pacienteDto.setEmail(paciente.getEmail());
-        pacienteDto.setTelefono(paciente.getTelefono());
-
-        return pacienteDto;
+        List<TurnoResponseDto> turnosResponse = turnoMapper.conversionTurnosAResponse(turnos);
+        return turnosResponse;
     }
 
 

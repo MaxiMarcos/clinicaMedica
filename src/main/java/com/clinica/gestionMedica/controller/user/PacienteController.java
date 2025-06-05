@@ -1,43 +1,38 @@
 package com.clinica.gestionMedica.controller.user;
 
-import com.clinica.gestionMedica.dto.PacienteDto;
+import com.clinica.gestionMedica.dto.PacienteRequestDto;
+import com.clinica.gestionMedica.dto.PacienteResponseDto;
+import com.clinica.gestionMedica.dto.TurnoResponseDto;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.service.impl.PacienteService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/paciente")
+@RequiredArgsConstructor
 public class PacienteController {
 
-    @Autowired
-    PacienteService pacienteService;
-
+    private final PacienteService pacienteService;
 
     @GetMapping("/historial/{id}") // probablemente deba modificar para poder usar #id == authentication.principal.id"
     public ResponseEntity<?> historialPaciente(@PathVariable Long id){
 
-        PacienteDto historial = pacienteService.traerHistorial(id);
+        List<TurnoResponseDto> historial = pacienteService.traerHistorial(id);
+        return ResponseEntity.status(HttpStatus.OK).body(historial);
 
-        if(historial != null){
-            return ResponseEntity.status(HttpStatus.OK).body(historial);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer historial del Paciente con id: " + id);
-        }
     }
 
 
     @PutMapping("/editar/{id}")
-    public ResponseEntity<?> editarPaciente(@PathVariable Long id, @RequestBody Paciente paciente){
+    public ResponseEntity<?> editarPaciente(@PathVariable Long id, @RequestBody PacienteRequestDto pacienteRequest){
 
-        PacienteDto pacienteEditado = pacienteService.editarPaciente(id, paciente);
-        if(pacienteEditado != null){
-            return ResponseEntity.status(HttpStatus.OK).body("Paciente editado exitosamente " + pacienteEditado);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró al paciente con ID: " + id);
-        }
+        PacienteResponseDto pacienteEditado = pacienteService.editarPaciente(id, pacienteRequest);
+        return ResponseEntity.status(HttpStatus.OK).body("Paciente editado exitosamente " + pacienteEditado);
     }
-
 }

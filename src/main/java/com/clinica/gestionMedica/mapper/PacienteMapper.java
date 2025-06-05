@@ -1,7 +1,7 @@
 package com.clinica.gestionMedica.mapper;
 
-import com.clinica.gestionMedica.dto.PacienteDto;
-import com.clinica.gestionMedica.dto.TurnoDto;
+import com.clinica.gestionMedica.dto.PacienteRequestDto;
+import com.clinica.gestionMedica.dto.PacienteResponseDto;
 import com.clinica.gestionMedica.entity.Paciente;
 import org.springframework.stereotype.Component;
 
@@ -19,26 +19,38 @@ public class PacienteMapper {
         this.TurnoMapper = TurnoMapper;
     }
 
-    public PacienteDto conversionAPacienteDto(Paciente paciente){
+    public PacienteResponseDto conversionPacienteAResponseDto(Paciente paciente){
 
-        return PacienteDto.builder()
+        return PacienteResponseDto.builder()
                 .dni(paciente.getDni())
                 .email(paciente.getEmail())
                 .nombre(paciente.getNombre())
                 .apellido(paciente.getApellido())
                 .telefono(paciente.getTelefono())
-                .historial(TurnoMapper.ListaHistorialDto(
+                .historial(TurnoMapper.conversionTurnosAResponse(
                         Optional.ofNullable(paciente.getListaTurnos()).orElse(Collections.emptyList())
                 ))
                 .build();
     }
 
+    public Paciente conversionRequestAPaciente(PacienteRequestDto pacienteRequest){
 
-    public List<PacienteDto> conversionPacientesDto(List<Paciente> pacientes){
+        return Paciente.builder()
+                .dni(pacienteRequest.getDni())
+                .email(pacienteRequest.getEmail())
+                .nombre(pacienteRequest.getNombre())
+                .apellido(pacienteRequest.getApellido())
+                .telefono(pacienteRequest.getTelefono())
+                .listaTurnos(TurnoMapper.conversionResponsesATurnos(pacienteRequest.getHistorial()))
+                .build();
+    }
 
-        List<PacienteDto> pacientesDto = new ArrayList<>();
+
+    public List<PacienteResponseDto> conversionPacientesAResponse(List<Paciente> pacientes){
+
+        List<PacienteResponseDto> pacientesDto = new ArrayList<>();
         for(Paciente p : pacientes){
-            pacientesDto.add(conversionAPacienteDto(p));
+            pacientesDto.add(conversionPacienteAResponseDto(p));
         }
         return pacientesDto;
     }

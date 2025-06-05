@@ -14,6 +14,7 @@ import com.clinica.gestionMedica.security.enumRole.RoleName;
 import com.clinica.gestionMedica.security.repository.TokenRepository;
 import com.clinica.gestionMedica.security.repository.UserRepository;
 import com.clinica.gestionMedica.security.service.IAuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements IAuthService {
 
     private final UserRepository authRepo;
@@ -33,23 +35,18 @@ public class AuthServiceImpl implements IAuthService {
     private final PasswordEncoder passwordEncoder;
     private final PacienteRepository pacienteRepo;
     private final AuthenticationManager authenticationManager;
-
-    public AuthServiceImpl(UserRepository authRepo, TokenRepository tokenRepo, JwtService jwtService, PasswordEncoder passwordEncoder, PacienteRepository pacienteRepo, AuthenticationManager authenticationManager) {
-        this.authRepo = authRepo;
-        this.tokenRepo = tokenRepo;
-        this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
-        this.pacienteRepo = pacienteRepo;
-        this.authenticationManager = authenticationManager;
-    }
+    private final UserRepository userRepo;
 
     @Override
     public TokenResponse register(RegisterRequest registerRequest, RoleName roleName){
 
         Paciente pacientePorDni = pacienteRepo.findByDni(registerRequest.getDni());
-
+        User userPorDni = userRepo.findByDni(registerRequest.getDni());
         if (pacientePorDni != null) {
             throw new IllegalStateException("Ya existe un usuario con este DNI, pruebe iniciando sesión." );
+        }
+        if(userPorDni != null){
+            throw new IllegalStateException("Ya existe un admin con este DNI, pruebe iniciando sesión." );
         }
 
         User user = User.builder()

@@ -1,45 +1,44 @@
 package com.clinica.gestionMedica.service.impl;
 
-import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
-import com.clinica.gestionMedica.dto.TurnoDto;
+import com.clinica.gestionMedica.dto.TurnoBusquedaRequestDto;
+import com.clinica.gestionMedica.dto.TurnoRequestDto;
+import com.clinica.gestionMedica.dto.TurnoResponseDto;
+import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.enums.*;
+import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
+import com.clinica.gestionMedica.excepciones.turno.TurnoNoEncontradoException;
 import com.clinica.gestionMedica.mapper.TurnoMapper;
 import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.repository.TurnoRepository;
 import com.clinica.gestionMedica.service.ITurnoService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TurnoService implements ITurnoService {
-
-    // CAMBIAR LLAMADOS A REPOR POR SERVICE
 
     private final TurnoRepository turnoRepo;
     private final TurnoMapper turnoMapper;
     private final PacienteRepository pacienteRepository;
     private final EmailService emailService;
 
-    public TurnoService(TurnoRepository TurnoRepo, TurnoMapper TurnoMapper, PacienteRepository pacienteRepository, EmailService emailService) {
-        this.turnoRepo = TurnoRepo;
-        this.turnoMapper = TurnoMapper;
-        this.pacienteRepository = pacienteRepository;
-        this.emailService = emailService;
-    }
-
     //metodo admin
     @Override
-    public Turno crearTurno(Turno turno) {
+    public TurnoResponseDto crearTurno(TurnoRequestDto turnoRequest) {
 
-        return turnoRepo.save(turno);
+        Turno turno = turnoMapper.conversionRequestATurno(turnoRequest);
+        turnoRepo.save(turno);
+        return turnoMapper.conversionTurnoAResponse(turno);
     }
 
     // metodo paciente
-    public TurnoDto agregarPrestacionEnTurno(Long pacienteId, Long turnoId) {
+    public TurnoResponseDto reservarTurno(Long pacienteId, Long turnoId) {
 
         Paciente paciente = pacienteRepository.findById(pacienteId)
                 .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + pacienteId));
@@ -53,23 +52,26 @@ public class TurnoService implements ITurnoService {
         turno.setEstado(PresenciaEnum.RESERVADO);
         turnoRepo.save(turno);
 
-        TurnoDto turnoDto = turnoMapper.conversionADto(turno);
+        TurnoResponseDto turnoResponseDto = turnoMapper.conversionTurnoAResponse(turno);
 
-        this.emailPersonalizado(paciente, turnoDto);
+        this.emailPersonalizado(paciente, turnoResponseDto);
 
-        return turnoDto;
+        return turnoResponseDto;
     }
 
     @Override
-    public Turno editarTurno(Long id, Turno turno) {
-        Turno nuevoTurno = this.traerTurno(id);
-        nuevoTurno.setPaciente(turno.getPaciente());
-        nuevoTurno.setEstado(turno.getEstado());
-        nuevoTurno.setPrestacion(turno.getPrestacion());
-        nuevoTurno.setFechaConsulta(turno.getFechaConsulta());
-        nuevoTurno.setMedico(turno.getMedico());
+    public TurnoResponseDto editarTurno(Long id, TurnoRequestDto turnoRequestDto) {
+        Turno turno = turnoRepo.findById(id)
+                .orElseThrow(() -> new TurnoNoEncontradoException("Turno no encontrado con id: " + id));
+        turno.setPaciente(turno.getPaciente());
+        turno.setEstado(turno.getEstado());
+        turno.setPrestacion(turno.getPrestacion());
+        turno.setFechaConsulta(turno.getFechaConsulta());
+        turno.setMedico(turno.getMedico());
+        turnoRepo.save(turno);
 
-        return turnoRepo.save(nuevoTurno);
+        return turnoMapper.conversionTurnoAResponse(turno);
+
     }
 
     public void validarTurnoParaPaciente(Turno Turno, Paciente paciente) {
@@ -93,26 +95,26 @@ public class TurnoService implements ITurnoService {
         }
     }
 
-    public List<Turno> buscarPorEspecialidadDisponibilidad(PrestacionRequestDTO prestacionRequestDTO){
+    public List<Turno> buscarPorEspecialidadDisponibilidad(TurnoBusquedaRequestDto requestDto){
 
-        Paciente paciente = pacienteRepository.findById(prestacionRequestDTO.getPacienteId())
-                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + prestacionRequestDTO.getPacienteId()));
+        Paciente paciente = pacienteRepository.findById(requestDto.getPacienteId())
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + requestDto.getPacienteId()));
 
 
         boolean cubierto = false;
 
-        if (paciente.getObraSocial() == ObraSocialEnum.IOSFA && (prestacionRequestDTO.getTipo() == PrestacionTiposEnum.CONSULTA_GENERAL ||
-                prestacionRequestDTO.getTipo() == PrestacionTiposEnum.ECOGRAFIA)) {
+        if (paciente.getObraSocial() == ObraSocialEnum.IOSFA && (requestDto.getTipo() == PrestacionTiposEnum.CONSULTA_GENERAL ||
+                requestDto.getTipo() == PrestacionTiposEnum.ECOGRAFIA)) {
             cubierto = true;
         } else if (paciente.getObraSocial() == ObraSocialEnum.OSDE) {
             cubierto = true;
         } else if (paciente.getObraSocial() == ObraSocialEnum.NINGUNA &&
-                prestacionRequestDTO.getTipo() == PrestacionTiposEnum.CONSULTA_GENERAL) {
+                requestDto.getTipo() == PrestacionTiposEnum.CONSULTA_GENERAL) {
             cubierto = true;
         }
 
         if (cubierto) {
-            return turnoRepo.findByPrestacion_TipoAndEstado(prestacionRequestDTO.getTipo(), PresenciaEnum.DISPONIBLE);
+            return turnoRepo.findByPrestacion_TipoAndEstado(requestDto.getTipo(), PresenciaEnum.DISPONIBLE);
         } else {
             throw new IllegalArgumentException("Su obra social no cubre el estudio. Comuníquese con administración."); // cambiar a una excepción personalizada
         }
@@ -120,28 +122,26 @@ public class TurnoService implements ITurnoService {
 
 
     @Override
-    public Turno traerTurno(Long id) {
-        return turnoRepo.findById(id).orElse(null);
+    public TurnoResponseDto traerTurno(Long id) {
+        Turno turno = turnoRepo.findById(id)
+                .orElseThrow(() -> new TurnoNoEncontradoException("Turno no encontrado con id: " + id));
+        return turnoMapper.conversionTurnoAResponse(turno);
     }
 
-   // @Override
-   // public List<TurnoDto> traerHistorialPaciente(String dni) {
-
-     //   List<Turno> historial = TurnoRepo.findByPaciente_Dni(dni);
-     //   return TurnoMapper.conversionAListaDto(historial);
-   // }
-
     @Override
-    public List<Turno> traerTurnos() {
-        return turnoRepo.findAll();
+    public List<TurnoResponseDto> traerTurnos() {
+
+        return turnoMapper.conversionTurnosAResponse(turnoRepo.findAll());
     }
 
     @Override
     public void eliminarTurno(Long id) {
-        turnoRepo.deleteById(id);
+        Turno turno = turnoRepo.findById(id)
+                .orElseThrow(() -> new TurnoNoEncontradoException("Turno no encontrado con id: " + id));
+        turnoRepo.deleteById(turno.getId());
     }
 
-    private void emailPersonalizado(Paciente paciente, TurnoDto TurnoDto){
+    private void emailPersonalizado(Paciente paciente, TurnoResponseDto turnoResponseDto){
 
         // 2. Preparar el cuerpo del mail
         String cuerpo = """
@@ -158,10 +158,10 @@ Por favor presentate 10 minutos antes.
 
 ¡Gracias por confiar en nosotros!
 """.formatted(
-                TurnoDto.getCodigoTurno(),
-                TurnoDto.getFechaConsulta().toString(),
-                TurnoDto.getPrecioTotal(),
-                TurnoDto.getEstado()
+                turnoResponseDto.getCodigoTurno(),
+                turnoResponseDto.getFechaConsulta().toString(),
+                turnoResponseDto.getPrecioTotal(),
+                turnoResponseDto.getEstado()
         );
 
 // 3. Enviar el correo

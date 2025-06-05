@@ -1,77 +1,72 @@
 package com.clinica.gestionMedica.service.impl;
 
-import com.clinica.gestionMedica.dto.PrestacionDto;
-import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
+import com.clinica.gestionMedica.dto.PrestacionRequestDto;
+import com.clinica.gestionMedica.dto.PrestacionResponseDto;
+import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Prestacion;
-import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
+import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
+import com.clinica.gestionMedica.excepciones.medico.MedicoYaExisteException;
+import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoEncontradaException;
+import com.clinica.gestionMedica.excepciones.prestacion.PrestacionYaExisteException;
 import com.clinica.gestionMedica.mapper.PrestacionMapper;
 import com.clinica.gestionMedica.repository.PrestacionRepository;
 import com.clinica.gestionMedica.service.IPrestacionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PrestacionService implements IPrestacionService {
 
     private final PrestacionRepository prestacionRepo;
     private final PrestacionMapper prestacionMapper;
 
-    public PrestacionService(PrestacionRepository prestacionRepo, MedicoService medicoService, PrestacionMapper prestacionMapper) {
-        this.prestacionRepo = prestacionRepo;
-        this.prestacionMapper = prestacionMapper;
-    }
-
-
     @Override
-    public Prestacion crearPrestacion(Prestacion prestacion) {
+    public PrestacionResponseDto crearPrestacion(PrestacionRequestDto prestacionRequest) {
 
-        return prestacionRepo.save(prestacion);
-    }
-
-    @Override
-    public Prestacion editarPrestacion(Long id, Prestacion prestacion) {
-
-        Prestacion nuevaPrestacion = this.traerPrestacion(id);
-
-        nuevaPrestacion.setTipo(prestacion.getTipo());
-        nuevaPrestacion.setDescripcion(prestacion.getDescripcion());
-        nuevaPrestacion.setPrecio(prestacion.getPrecio());
-
-        return nuevaPrestacion;
-    }
-
-    @Override
-    public Prestacion traerPrestacion(Long id) {
-        return prestacionRepo.findById(id).orElse(null);
-    }
-
-    @Override
-    public PrestacionDto traerPrestacionDto(Long id) {
-        Prestacion prestacion = prestacionRepo.findById(id).orElse(null);
-
-        if (prestacion != null) {
-            return prestacionMapper.conversionAPrestacionDto(prestacion);
-        } else {
-            return null;
+        Prestacion prestacionExiste = prestacionRepo.findByTipo(prestacionRequest.getTipo());
+        if(prestacionExiste != null){
+            throw new PrestacionYaExisteException("Ya existe una prestición creada con este nombre/tipo");
         }
+        Prestacion prestacion = prestacionMapper.conversionRequestAPrestacion(prestacionRequest);
+        prestacionRepo.save(prestacion);
+        return prestacionMapper.conversionPrestacionAResponse(prestacion);
     }
 
-   // public List<Prestacion> buscarPorEspecialidadDisponibilidad(PrestacionRequestDTO prestacionRequestDTO){
+    @Override
+    public PrestacionResponseDto editarPrestacion(Long id, PrestacionRequestDto prestacionRequest) {
 
-  //      return prestacionRepo.findByTipoAndEstado(prestacionRequestDTO.getTipo(), PrestacionEstadoEnum.DISPONIBLE);
-  //  }
+        Prestacion prestacion = prestacionRepo.findById(id)
+                .orElseThrow(() -> new PrestacionNoEncontradaException("Prestacion no encontrada con id: " + id));
+        prestacion.setTipo(prestacion.getTipo());
+        prestacion.setDescripcion(prestacion.getDescripcion());
+        prestacion.setPrecio(prestacion.getPrecio());
+
+        return prestacionMapper.conversionPrestacionAResponse(prestacion);
+    }
+
+    @Override
+    public PrestacionResponseDto traerPrestacion(Long id) {
+        Prestacion prestacion = prestacionRepo.findById(id)
+                .orElseThrow(() -> new PrestacionNoEncontradaException("Prestacion no encontrada con id: " + id));
+        return prestacionMapper.conversionPrestacionAResponse(prestacion);
+    }
 
 
     @Override
-    public List<Prestacion> traerPrestaciones() {
-        return prestacionRepo.findAll();
+    public List<PrestacionResponseDto> traerPrestaciones() {
+        return prestacionMapper.conversionPrestacionesAResponse(prestacionRepo.findAll());
     }
 
 
     @Override
     public void eliminarPrestacion(Long id) {
-
-        prestacionRepo.deleteById(id);
+        Prestacion prestacion = prestacionRepo.findById(id)
+                .orElseThrow(() -> new PrestacionNoEncontradaException("Prestacion no encontrada con id: " + id));
+        prestacionRepo.deleteById(prestacion.getId());
     }
 }

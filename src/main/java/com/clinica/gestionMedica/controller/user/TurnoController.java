@@ -1,10 +1,12 @@
 package com.clinica.gestionMedica.controller.user;
 
-import com.clinica.gestionMedica.dto.PrestacionRequestDTO;
-import com.clinica.gestionMedica.dto.TurnoDto;
+import com.clinica.gestionMedica.dto.TurnoBusquedaRequestDto;
+import com.clinica.gestionMedica.dto.TurnoRequestDto;
+import com.clinica.gestionMedica.dto.TurnoResponseDto;
 import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.service.impl.TurnoService;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,23 +16,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/turno")
+@RequiredArgsConstructor
 public class TurnoController {
 
-    @Autowired
-    TurnoService turnoService;
+    private final TurnoService turnoService;
 
     @Operation(
             summary = "Adquirir turno",
             description = "Paciente elige un turno disponible y lo adquiere, vinculando su id con el turno."
     )
     @PutMapping("/pacientes/{pacienteId}/turnos/{turnoId}")
-    public ResponseEntity<?> agregarPrestacionEnTurno(@PathVariable Long pacienteId,
-                                                        @PathVariable Long turnoId) {
+    public ResponseEntity<?> reservarTurno(@PathVariable Long pacienteId, @PathVariable Long turnoId) {
 
-        TurnoDto turnoDto = turnoService.agregarPrestacionEnTurno(pacienteId, turnoId);
+        TurnoResponseDto turnoResponseDto = turnoService.reservarTurno(pacienteId, turnoId);
 
-        if(turnoDto != null){
-            return ResponseEntity.status(HttpStatus.CREATED).body(turnoDto);
+        if(turnoResponseDto != null){
+            return ResponseEntity.status(HttpStatus.CREATED).body(turnoResponseDto);
         }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear el turno");
         }
@@ -38,33 +39,19 @@ public class TurnoController {
 
     @GetMapping("/traer/{id}")
     public ResponseEntity<?> traerTurno(@PathVariable Long id){
-        Turno turno = turnoService.traerTurno(id);
+        TurnoResponseDto turnoResponse = turnoService.traerTurno(id);
 
-        if(turno != null){
-            return ResponseEntity.status(HttpStatus.OK).body(turno);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer la Turno");
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(turnoResponse);
     }
 
     @GetMapping("/traer/filtro")
-    public ResponseEntity<?> traerTurnosPorEspecialidadYDisponibilidad(@RequestBody PrestacionRequestDTO prestacionRequestDTO){
-        List<Turno> Turnos = turnoService.buscarPorEspecialidadDisponibilidad(prestacionRequestDTO);
+    public ResponseEntity<?> traerTurnosPorEspecialidadYDisponibilidad(@RequestBody TurnoBusquedaRequestDto requestDto){
+        List<Turno> turnos = turnoService.buscarPorEspecialidadDisponibilidad(requestDto);
 
-        if(Turnos != null){
-            return ResponseEntity.status(HttpStatus.OK).body(Turnos);
+        if(turnos != null){
+            return ResponseEntity.status(HttpStatus.OK).body(turnos);
         }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer Turnos");
-        }
-    }
-
-    @PutMapping("/editar/{id}")
-    public ResponseEntity<?> editarTurno(@PathVariable Long id,@RequestBody Turno turno){
-        Turno nuevaTurno = turnoService.editarTurno(id, turno);
-        if(nuevaTurno != null){
-            return ResponseEntity.status(HttpStatus.OK).body("Turno modificadda exitosamente "+ nuevaTurno);
-        }else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se encontró la Turno con ID: "+ id);
         }
     }
 }

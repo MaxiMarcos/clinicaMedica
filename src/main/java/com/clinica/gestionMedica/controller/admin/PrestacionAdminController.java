@@ -1,7 +1,11 @@
 package com.clinica.gestionMedica.controller.admin;
 
+import com.clinica.gestionMedica.dto.PrestacionRequestDto;
+import com.clinica.gestionMedica.dto.PrestacionResponseDto;
 import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.service.impl.PrestacionService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,33 +14,25 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/prestacion")
+@RequiredArgsConstructor
 public class PrestacionAdminController {
 
     private final PrestacionService prestacionService;
 
-    public PrestacionAdminController(PrestacionService prestacionService) {
-        this.prestacionService = prestacionService;
-    }
-
     @PostMapping("/crear")
-    public ResponseEntity<?> crearPrestacionAdmin(@RequestBody Prestacion prestacion) {
+    public ResponseEntity<?> crearPrestacionAdmin(@Valid @RequestBody PrestacionRequestDto prestacionRequest) {
 
-        Prestacion nuevaPrestacion = prestacionService.crearPrestacion(prestacion);
-
-        if (nuevaPrestacion != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPrestacion);
-        } else {
-            return ResponseEntity.badRequest().body("Error al crear la prestación. Verifique los datos enviados.");
-        }
+        PrestacionResponseDto prestacionResponse = prestacionService.crearPrestacion(prestacionRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(prestacionResponse);
     }
 
     @GetMapping("traertodo")
     public ResponseEntity<?> traerPrestaciones(){
 
-        List<Prestacion> prestaciones = prestacionService.traerPrestaciones();
+        List<PrestacionResponseDto> prestacionesResponse = prestacionService.traerPrestaciones();
 
-        if (prestaciones!= null) {
-            return ResponseEntity.status(HttpStatus.OK).body(prestaciones);
+        if (prestacionesResponse!= null) {
+            return ResponseEntity.status(HttpStatus.OK).body(prestacionesResponse);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al traer prestaciones");
         }
@@ -44,13 +40,7 @@ public class PrestacionAdminController {
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminarPrestacion(@PathVariable Long id) {
-        Prestacion prestacion = prestacionService.traerPrestacion(id);
-
-        if (prestacion == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prestación no encontrada con el ID: " + id);
-        }
-
-        prestacionService.eliminarPrestacion(prestacion.getId());
-        return ResponseEntity.status(HttpStatus.OK).body("Prestación eliminada correctamente con el ID: " + id);
+        prestacionService.eliminarPrestacion(id);
+        return ResponseEntity.noContent().build();
     }
 }
