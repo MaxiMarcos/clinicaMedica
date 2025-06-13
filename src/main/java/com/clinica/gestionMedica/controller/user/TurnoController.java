@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reserva")
+@RequestMapping("/reservas")
 @RequiredArgsConstructor
 public class TurnoController {
 
@@ -38,9 +38,9 @@ public class TurnoController {
         return ResponseEntity.status(HttpStatus.OK).body(turnoResponse);
     }
 
-    @GetMapping("/filtro")
+    @PostMapping("/filtro")
     public ResponseEntity<?> traerTurnosPorEspecialidadYDisponibilidad(@RequestBody TurnoBusquedaRequestDto requestDto){
-        List<Turno> turnos = turnoService.buscarPorEspecialidadDisponibilidad(requestDto);
+        List<TurnoResponseDto> turnos = turnoService.buscarPorEspecialidadDisponibilidad(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(turnos);
     }
 }

@@ -1,71 +1,64 @@
-🎬 CLÍNICA MÉDICA API 🎬
+# 🎬 Clínica Médica API 🎬  
+Solución backend para la gestión de clínicas médicas con funcionalidades de turnos, usuarios y más.
 
-¡Bienvenido! Este proyecto es una solución orientada a la gestión de clínicas médicas.
+## ✨ Características principales  
+- Login y registro de usuarios  
+- Búsqueda con filtros  
+- Visualización de historial clínico  
+- Gestión de turnos y carrito de compras 
 
-✨ Características ✨
-Login
-Filtros de búsqueda
-Visualización de historial clínico.
-Obtener turno / carro de compras
-🛠️ Construido con 🛠️
-Java 17
-Spring Boot 3.4.2
-Maven
-JPA
-Hibernate
-MySQL
-Spring Security
+## 🛠️ Tecnologías usadas  
+- Java 17  
+- Spring Boot 3.4.2  
+- Maven  
+- JPA / Hibernate  
+- MySQL  
+- Spring Security  
+  
+## 📜 Documentación API  
+Puedes visualizar y probar los endpoints con Swagger UI en:  
+(http://localhost:[puerto]/swagger-ui/index.html) 
 
-📜 Documentación de la API
-
-Swagger está habilitado para visualizar y probar los endpoints.
-
-Swagger UI: http://localhost:9001/swagger-ui/index.html
-
+También puedes usar Postman o cualquier cliente REST para probar la API.
 💡 Puedes usar Postman o cualquier cliente REST para probar los endpoints.
 
-📂 Endpoints principales
+## 📂 Endpoints principales
 
-| Método | Endpoint       | Descripción                          |
-|--------|--------------|--------------------------------------|
-| POST | `/register-customer` | Registro de usuario       |
-| POST | `/login` | Login usuario       |
-| GET    | `/paciente/historial/{id}`    | Obtener historial de paciente         | 
-| POST    | `/turno/crear` | Paciente inicia el proceso de compra         |
-| POST   | `/prestacion/obtener-turno `   | Elección de prestación          |
-| POST    | `/turno/{pacienteId}/{prestacionId}` | Prestaciones se agregan al carrito      |
+| Método | Endpoint                          | Descripción                         |
+|--------|---------------------------------|-----------------------------------|
+| GET    | `/pacientes/historial/{dni}`       | Obtener historial de paciente     |
+| POST   | `/reservas/filtro`                   | Paciente filtra turnos por prestación |
+| POST   | `/admin/turnos`      | Admin crea un turno            |
+| PUT   | `/reservas/pacientes/{pacienteId}/turnos/{turnoId}")` | Paciente reserva un turno   |
 
 
-🧾 Registro/login:
- - [x] Iniciar sesión
-
- - [x] Registrar usuario paciente
- - [x] Registrar usuario admin
- Paciente:
-
- - [x] Crear paciente (admin)
-
- - [x] Listar pacientes (admin)
-
- - [x] Buscar paciente por DNI o ID (admin)
-
- - [] Actualizar paciente (admin/paciente)
-
- - [] Eliminar paciente (admin)
-
-🗓️ Turno:
- - [X] Tomar turno turno (paciente)
-
- - [X] Listar turnos por especialidad y disponibilidad (paciente)
- - 
- - [X] Validaciones para listar turnos según obra social del paciente
-
- - [] Cancelar turno (paciente)
-
- - [] Validar disponibilidad (evitar superposición de turnos)
 
 
-👨‍⚕️ Médico:
- - [x] Crear médico
+## 🧾 Funcionalidades implementadas
 
- - [] Listar médicos
+### Registro / Login
+
+- [x] Iniciar sesión  
+- [x] Registrar usuario paciente  
+- [x] Registrar usuario admin  
+
+### Paciente
+
+- [x] Crear paciente (admin)  
+- [x] Listar pacientes (admin)  
+- [x] Buscar paciente por DNI o ID (admin)  
+- [x] Actualizar paciente (admin/paciente)  
+- [x] Eliminar paciente (admin)  
+
+### Turnos
+
+- [x] Tomar turno (paciente)  
+- [x] Listar turnos por especialidad y disponibilidad (paciente)  
+- [x] Validaciones para listar turnos según obra social  
+- [ ] Cancelar turno (paciente)  
+- [x] Validar disponibilidad (evitar superposición)  
+
+### Médico
+
+- [x] Crear médico (admin) 
+- [x] Listar médicos

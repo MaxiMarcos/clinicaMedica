@@ -31,6 +31,7 @@ public class TurnoMapper {
 
 
         return TurnoResponseDto.builder()
+                .id(turno.getId())
                 .estado(turno.getEstado())
                 .codigoTurno(turno.getCodigoTurno())
                 .fechaConsulta(turno.getFechaConsulta())

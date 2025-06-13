@@ -116,7 +116,7 @@ public class TurnoService implements ITurnoService {
         }
     }
 
-    public List<Turno> buscarPorEspecialidadDisponibilidad(TurnoBusquedaRequestDto requestDto){
+    public List<TurnoResponseDto> buscarPorEspecialidadDisponibilidad(TurnoBusquedaRequestDto requestDto){
 
         Paciente paciente = pacienteRepository.findById(requestDto.getPacienteId())
                 .orElseThrow(PacienteNoEncontradoException::new);
@@ -135,7 +135,8 @@ public class TurnoService implements ITurnoService {
         }
 
         if (cubierto) {
-            return turnoRepo.findByPrestacion_TipoAndEstado(requestDto.getTipo(), PresenciaEnum.DISPONIBLE);
+            List<Turno> listaTurnos = turnoRepo.findByPrestacion_TipoAndEstado(requestDto.getTipo(), PresenciaEnum.DISPONIBLE);
+            return turnoMapper.conversionTurnosAResponse(listaTurnos);
         } else {
             throw new PrestacionNoCubiertaException();
         }
