@@ -44,7 +44,7 @@ public class PacienteService implements IPacienteService {
     public PacienteResponseDto editarPaciente(Long id, PacienteRequestDto pacienteRequest) {
 
         Paciente paciente = pacienteRepo.findById(id)
-                .orElseThrow(() -> new PacienteNoEncontradoException("Paciente no encontrado con id: " + id));
+                .orElseThrow(PacienteNoEncontradoException::new);
 
         if(pacienteRequest.getApellido() != null) paciente.setApellido(pacienteRequest.getApellido());
         if(pacienteRequest.getNombre() != null) paciente.setNombre(pacienteRequest.getNombre());
@@ -61,7 +61,7 @@ public class PacienteService implements IPacienteService {
     @Override
     public PacienteResponseDto traerPaciente(Long id) {
         Paciente paciente = pacienteRepo.findById(id)
-                .orElseThrow(() -> new PacienteNoEncontradoException("Paciente no encontrado con id: " + id));
+                .orElseThrow(PacienteNoEncontradoException::new);
 
         return pacienteMapper.conversionPacienteAResponseDto(paciente);
     }
@@ -79,7 +79,7 @@ public class PacienteService implements IPacienteService {
     @Override
     public void eliminarPaciente(Long id) {
         Paciente paciente = pacienteRepo.findById(id)
-                .orElseThrow(() -> new PacienteNoEncontradoException("Paciente no encontrado con id: " + id));
+                .orElseThrow(PacienteNoEncontradoException::new);
         pacienteRepo.deleteById(paciente.getId());
     }
 

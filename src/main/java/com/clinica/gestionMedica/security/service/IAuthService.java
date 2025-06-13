@@ -12,7 +12,8 @@ import java.util.List;
 
 public interface IAuthService {
 
-    TokenResponse register(RegisterRequest registerRequest, RoleName roleName);
+    TokenResponse registerCustomer(RegisterRequest registerRequest, RoleName roleName);
+    TokenResponse registerAdmin(RegisterRequest registerRequest, RoleName roleName);
     TokenResponse login (LoginRequest loginRequest);
     TokenResponse refreshToken (String authHeader);
 

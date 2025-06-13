@@ -32,7 +32,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<TokenResponse> registerCustomer(@Valid @RequestBody RegisterRequest registerRequest) {
 
-        final TokenResponse token = authService.register(registerRequest, RoleName.CUSTOMER);
+        final TokenResponse token = authService.registerCustomer(registerRequest, RoleName.CUSTOMER);
 
         return ResponseEntity.ok(token);
     }
@@ -40,7 +40,7 @@ public class AuthController {
     @PostMapping("/admin/register")
     public ResponseEntity<TokenResponse> registerAdmin(@Valid @RequestBody RegisterRequest registerRequest) {
 
-        final TokenResponse token = authService.register(registerRequest, RoleName.ADMIN);
+        final TokenResponse token = authService.registerAdmin(registerRequest, RoleName.ADMIN);
 
         return ResponseEntity.ok(token);
     }

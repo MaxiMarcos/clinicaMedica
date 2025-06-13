@@ -16,11 +16,13 @@ import com.clinica.gestionMedica.security.repository.UserRepository;
 import com.clinica.gestionMedica.security.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,13 +40,13 @@ public class AuthServiceImpl implements IAuthService {
     private final UserRepository userRepo;
 
     @Override
-    public TokenResponse register(RegisterRequest registerRequest, RoleName roleName){
+    public TokenResponse registerCustomer(RegisterRequest registerRequest, RoleName roleName){
 
         //Paciente pacientePorDni = pacienteRepo.findByDni(registerRequest.getDni());
         User userPorDni = userRepo.findByDni(registerRequest.getDni());
 
         if(userPorDni != null){
-            throw new IllegalStateException("Ya existe un admin con este DNI, pruebe iniciando sesión." );
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un usuario con este DNI, pruebe iniciando sesión." );
         }
 
         User user = User.builder()
@@ -57,12 +59,43 @@ public class AuthServiceImpl implements IAuthService {
 
         Paciente paciente = user.getPaciente();
         if (paciente == null & roleName == RoleName.CUSTOMER) {
-            throw new IllegalStateException("No es posible crear su usuario porque no existe su DNI en nuestros registros, por favor contáctese con la clínica. " );
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"No es posible crear su usuario porque no existe su DNI en nuestros registros, por favor contáctese con la clínica. " );
         }
 
         if (!paciente.getEmail().equals(registerRequest.getEmail())) {
-            throw new IllegalStateException("No es posible crear su usuario porque no existe su email en nuestros registros, por favor contáctese con la clínica. " );
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"No es posible crear su usuario porque no existe su email en nuestros registros, por favor contáctese con la clínica. " );
         } //esto va para registro de paciente
+
+        var savedUser = authRepo.save(user);
+        var jwtToken = jwtService.generateToken(savedUser);
+        var refreshToken = jwtService.generateRefreshToken(savedUser);
+        saveUserToken(savedUser, jwtToken);
+
+        return new TokenResponse(jwtToken, refreshToken);
+
+    }
+
+    @Override
+    public TokenResponse registerAdmin(RegisterRequest registerRequest, RoleName roleName){
+
+        User userPorDni = userRepo.findByDni(registerRequest.getDni());
+
+        if(userPorDni != null){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Ya existe un usuario con este DNI, pruebe iniciando sesión." );
+        }
+
+        User user = User.builder()
+                .dni(registerRequest.getDni())
+                .email(registerRequest.getEmail())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(roleName)
+                .paciente(pacienteRepo.findByDni(registerRequest.getDni()))
+                .build();
+
+        Paciente paciente = user.getPaciente();
+        if (paciente != null || roleName == RoleName.CUSTOMER) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Los datos ya están asociados a un paciente. Por favor, regístrese como usuario estándar. " );
+        }
 
         var savedUser = authRepo.save(user);
         var jwtToken = jwtService.generateToken(savedUser);

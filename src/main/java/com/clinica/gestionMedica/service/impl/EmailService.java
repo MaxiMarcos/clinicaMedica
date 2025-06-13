@@ -12,6 +12,7 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     public void enviarCorreo(String para, String asunto, String cuerpo) {
+
         SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setTo(para);
         mensaje.setSubject(asunto);

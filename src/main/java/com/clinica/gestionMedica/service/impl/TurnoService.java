@@ -5,12 +5,21 @@ import com.clinica.gestionMedica.dto.TurnoRequestDto;
 import com.clinica.gestionMedica.dto.TurnoResponseDto;
 import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
+import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.enums.*;
 import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
+import com.clinica.gestionMedica.excepciones.paciente.PacienteNoEncontradoException;
+import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoCubiertaException;
+import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoEncontradaException;
+import com.clinica.gestionMedica.excepciones.turno.ObraSocialRequeridaException;
+import com.clinica.gestionMedica.excepciones.turno.TurnoNoDisponibleException;
 import com.clinica.gestionMedica.excepciones.turno.TurnoNoEncontradoException;
+import com.clinica.gestionMedica.mapper.MedicoMapper;
 import com.clinica.gestionMedica.mapper.TurnoMapper;
+import com.clinica.gestionMedica.repository.MedicoRepository;
 import com.clinica.gestionMedica.repository.PacienteRepository;
+import com.clinica.gestionMedica.repository.PrestacionRepository;
 import com.clinica.gestionMedica.repository.TurnoRepository;
 import com.clinica.gestionMedica.service.ITurnoService;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,12 +36,25 @@ public class TurnoService implements ITurnoService {
     private final TurnoMapper turnoMapper;
     private final PacienteRepository pacienteRepository;
     private final EmailService emailService;
+    private final PrestacionRepository prestacionRepository;
+    private final MedicoRepository medicoRepository;
 
     //metodo admin
     @Override
     public TurnoResponseDto crearTurno(TurnoRequestDto turnoRequest) {
 
-        Turno turno = turnoMapper.conversionRequestATurno(turnoRequest);
+        int ultimoCodigo = turnoRepo.findMaxCodigoTurno().orElse(0);
+        turnoRequest.setCodigoTurno(ultimoCodigo + 1);
+
+        Paciente paciente = null;
+        if (turnoRequest.getPacienteId() != null){
+            paciente = pacienteRepository.findById(turnoRequest.getPacienteId()).orElseThrow(PacienteNoEncontradoException::new);
+        }
+
+        Medico medico = medicoRepository.findById(turnoRequest.getMedicoId()).orElseThrow(MedicoNoEncontradoException::new);
+        Prestacion prestacion = prestacionRepository.findById(turnoRequest.getPrestacionId()).orElseThrow(PrestacionNoEncontradaException::new);
+
+        Turno turno = turnoMapper.conversionRequestATurno(turnoRequest, medico, prestacion, paciente);
         turnoRepo.save(turno);
         return turnoMapper.conversionTurnoAResponse(turno);
     }
@@ -41,49 +63,48 @@ public class TurnoService implements ITurnoService {
     public TurnoResponseDto reservarTurno(Long pacienteId, Long turnoId) {
 
         Paciente paciente = pacienteRepository.findById(pacienteId)
-                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + pacienteId));
+                .orElseThrow(PacienteNoEncontradoException::new);
 
         Turno turno = turnoRepo.findById(turnoId)
-                .orElseThrow(() -> new EntityNotFoundException("Turno no encontrado con ID: " + turnoId));
+                .orElseThrow(TurnoNoEncontradoException::new);
 
         this.validarTurnoParaPaciente(turno, paciente);
 
         turno.setPaciente(paciente);
         turno.setEstado(PresenciaEnum.RESERVADO);
-        turnoRepo.save(turno);
-
         TurnoResponseDto turnoResponseDto = turnoMapper.conversionTurnoAResponse(turno);
 
         this.emailPersonalizado(paciente, turnoResponseDto);
 
+        turnoRepo.save(turno);
         return turnoResponseDto;
     }
 
     @Override
     public TurnoResponseDto editarTurno(Long id, TurnoRequestDto turnoRequest) {
         Turno turno = turnoRepo.findById(id)
-                .orElseThrow(() -> new TurnoNoEncontradoException("Turno no encontrado con id: " + id));
-        if(turnoRequest.getPaciente() != null) turno.setPaciente(turno.getPaciente());
+                .orElseThrow(TurnoNoEncontradoException::new);
+        if(turnoRequest.getPacienteId() != null) turno.setPaciente(turno.getPaciente());
         if(turnoRequest.getEstado() != null) turno.setEstado(turno.getEstado());
-        if(turnoRequest.getPrestacion() != null) turno.setPrestacion(turno.getPrestacion());
+        if(turnoRequest.getPrestacionId() != null) turno.setPrestacion(turno.getPrestacion());
         if(turnoRequest.getFechaConsulta() != null) turno.setFechaConsulta(turno.getFechaConsulta());
-        if(turnoRequest.getMedico() != null) turno.setMedico(turno.getMedico());
+        if(turnoRequest.getMedicoId() != null) turno.setMedico(turno.getMedico());
         turnoRepo.save(turno);
 
         return turnoMapper.conversionTurnoAResponse(turno);
 
     }
 
-    public void validarTurnoParaPaciente(Turno Turno, Paciente paciente) {
-        if (Turno.getEstado() != PresenciaEnum.DISPONIBLE) {
-            throw new IllegalArgumentException("Este turno ya no está disponible.");
+    public void validarTurnoParaPaciente(Turno turno, Paciente paciente) {
+        if (turno.getEstado() != PresenciaEnum.DISPONIBLE) {
+            throw new TurnoNoDisponibleException();
         }
 
-        PrestacionTiposEnum tipo = Turno.getPrestacion().getTipo();
+        PrestacionTiposEnum tipo = turno.getPrestacion().getTipo();
         ObraSocialEnum obra = paciente.getObraSocial();
 
         if (obra == ObraSocialEnum.NINGUNA) {
-            throw new IllegalArgumentException("Necesita una obra social para Reservar este turno.");
+            throw new ObraSocialRequeridaException();
         }
 
         boolean cubierto =
@@ -91,14 +112,14 @@ public class TurnoService implements ITurnoService {
                         || obra == ObraSocialEnum.OSDE;
 
         if (!cubierto) {
-            throw new IllegalArgumentException("Su obra social no cubre este estudio.");
+            throw new PrestacionNoCubiertaException();
         }
     }
 
     public List<Turno> buscarPorEspecialidadDisponibilidad(TurnoBusquedaRequestDto requestDto){
 
         Paciente paciente = pacienteRepository.findById(requestDto.getPacienteId())
-                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + requestDto.getPacienteId()));
+                .orElseThrow(PacienteNoEncontradoException::new);
 
 
         boolean cubierto = false;
@@ -116,7 +137,7 @@ public class TurnoService implements ITurnoService {
         if (cubierto) {
             return turnoRepo.findByPrestacion_TipoAndEstado(requestDto.getTipo(), PresenciaEnum.DISPONIBLE);
         } else {
-            throw new IllegalArgumentException("Su obra social no cubre el estudio. Comuníquese con administración."); // cambiar a una excepción personalizada
+            throw new PrestacionNoCubiertaException();
         }
     }
 
@@ -124,7 +145,7 @@ public class TurnoService implements ITurnoService {
     @Override
     public TurnoResponseDto traerTurno(Long id) {
         Turno turno = turnoRepo.findById(id)
-                .orElseThrow(() -> new TurnoNoEncontradoException("Turno no encontrado con id: " + id));
+                .orElseThrow(TurnoNoEncontradoException::new);
         return turnoMapper.conversionTurnoAResponse(turno);
     }
 
@@ -137,7 +158,7 @@ public class TurnoService implements ITurnoService {
     @Override
     public void eliminarTurno(Long id) {
         Turno turno = turnoRepo.findById(id)
-                .orElseThrow(() -> new TurnoNoEncontradoException("Turno no encontrado con id: " + id));
+                .orElseThrow(TurnoNoEncontradoException::new);
         turnoRepo.deleteById(turno.getId());
     }
 
@@ -147,7 +168,7 @@ public class TurnoService implements ITurnoService {
         String cuerpo = """
 Hola:
 
-Tu turno fue Turnodo con éxito.
+Tu turno fue registrado con éxito.
 
 ✅ Código: %d
 📅 Fecha: %s
@@ -165,10 +186,14 @@ Por favor presentate 10 minutos antes.
         );
 
 // 3. Enviar el correo
-        emailService.enviarCorreo(
+        try {emailService.enviarCorreo(
                 paciente.getEmail(),
                 "Turno confirmado - Clínica Ejemplo",
                 cuerpo
         );
+    }  catch (Exception e) { // o un tipo más específico como MessagingException
+            throw new RuntimeException("Error al enviar el correo de confirmación: " + e.getMessage());
+        }
     }
+
 }

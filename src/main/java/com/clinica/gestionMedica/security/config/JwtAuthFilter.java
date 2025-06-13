@@ -41,10 +41,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        if(request.getServletPath().contains("/auth")){
-            filterChain.doFilter(request,response);
+        String path = request.getServletPath();
+        if (path.startsWith("/auth") || path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path.equals("/swagger-ui.html")) {
+            System.out.println("Swagger or auth path detected, skipping JWT filter: " + path);
+            filterChain.doFilter(request, response);
             return;
         }
+
+
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request,response);
@@ -53,6 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String jwtToken = authHeader.substring(7);
         final String userEmail = jwtService.extractUsername(jwtToken);
         if(userEmail == null || SecurityContextHolder.getContext().getAuthentication() != null){
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -69,6 +74,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         final boolean isTokenValid = jwtService.isTokenValid(jwtToken, user.get());
         if(!isTokenValid){
+            filterChain.doFilter(request, response);
             return;
         }
         final var authToken = new UsernamePasswordAuthenticationToken(

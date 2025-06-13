@@ -25,9 +25,9 @@ public class TurnoRequestDto {
     private LocalDateTime fechaConsulta;
     @NotNull
     private PresenciaEnum estado = PresenciaEnum.DISPONIBLE;
-    private Paciente paciente;
+    private Long pacienteId;
     @NotNull
-    private Prestacion prestacion;
+    private Long prestacionId;
     @NotNull
-    private Medico medico;
+    private Long medicoId;
 }

@@ -41,7 +41,7 @@ public class PrestacionService implements IPrestacionService {
     public PrestacionResponseDto editarPrestacion(Long id, PrestacionRequestDto prestacionRequest) {
 
         Prestacion prestacion = prestacionRepo.findById(id)
-                .orElseThrow(() -> new PrestacionNoEncontradaException("Prestacion no encontrada con id: " + id));
+                .orElseThrow(PrestacionNoEncontradaException::new);
         if(prestacionRequest.getTipo() != null) prestacion.setTipo(prestacionRequest.getTipo());
         if(prestacionRequest.getDescripcion() != null) prestacion.setDescripcion(prestacionRequest.getDescripcion());
         if(prestacionRequest.getPrecio() != null) prestacion.setPrecio(prestacionRequest.getPrecio());
@@ -52,7 +52,7 @@ public class PrestacionService implements IPrestacionService {
     @Override
     public PrestacionResponseDto traerPrestacion(Long id) {
         Prestacion prestacion = prestacionRepo.findById(id)
-                .orElseThrow(() -> new PrestacionNoEncontradaException("Prestacion no encontrada con id: " + id));
+                .orElseThrow(PrestacionNoEncontradaException::new);
         return prestacionMapper.conversionPrestacionAResponse(prestacion);
     }
 
@@ -66,7 +66,7 @@ public class PrestacionService implements IPrestacionService {
     @Override
     public void eliminarPrestacion(Long id) {
         Prestacion prestacion = prestacionRepo.findById(id)
-                .orElseThrow(() -> new PrestacionNoEncontradaException("Prestacion no encontrada con id: " + id));
+                .orElseThrow(PrestacionNoEncontradaException::new);
         prestacionRepo.deleteById(prestacion.getId());
     }
 }

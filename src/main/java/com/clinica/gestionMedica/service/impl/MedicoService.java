@@ -37,7 +37,7 @@ public class MedicoService implements IMedicoService {
     @Override
     public MedicoResponseDto editarMedico(Long id, MedicoRequestDto medicoRequest) {
         Medico medico = medicoRepo.findById(id)
-                .orElseThrow(() -> new MedicoNoEncontradoException("Médico no encontrado con id: " + id));
+                .orElseThrow(MedicoNoEncontradoException::new);
 
         if (medicoRequest.getApellido() != null) medico.setApellido(medicoRequest.getApellido());
         if (medicoRequest.getNombre() != null) medico.setNombre(medicoRequest.getNombre());
@@ -56,7 +56,7 @@ public class MedicoService implements IMedicoService {
     @Override
     public MedicoResponseDto traerMedico(Long id) {
         Medico medico = medicoRepo.findById(id)
-                .orElseThrow(() -> new MedicoNoEncontradoException("Médico no encontrado con id: " + id));
+                .orElseThrow(MedicoNoEncontradoException::new);
         return medicoMapper.convertirMedicoAResponse(medico);
     }
 
@@ -68,7 +68,7 @@ public class MedicoService implements IMedicoService {
     @Override
     public void eliminarMedico(Long id) {
         Medico medico = medicoRepo.findById(id)
-                .orElseThrow(() -> new MedicoNoEncontradoException("Médico no encontrado con id: " + id));
+                .orElseThrow(MedicoNoEncontradoException::new);
         medicoRepo.deleteById(medico.getId());
     }
 
