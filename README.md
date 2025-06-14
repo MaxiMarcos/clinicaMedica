@@ -1,5 +1,8 @@
-# 🎬 Clínica Médica API 🎬  
+#  Clínica Médica API  
 Solución backend para la gestión de clínicas médicas con funcionalidades de turnos, usuarios y más.
+
+## 🎥 Video explicativo  
+👉 Mirá el video del proyecto en [LinkedIn](https://www.linkedin.com/posts/maximiliano-abel-marcos_java-springboot-backenddeveloper-activity-7339410286061178880-EhKK?utm_source=share&utm_medium=member_desktop&rcm=ACoAADwjhKgBFeG7Q3tf0Cxwind36BaqnlIyJkg)
 
 ## ✨ Características principales  
 - Login y registro de usuarios  
@@ -19,8 +22,7 @@ Solución backend para la gestión de clínicas médicas con funcionalidades de 
 Puedes visualizar y probar los endpoints con Swagger UI en:  
 (http://localhost:[puerto]/swagger-ui/index.html) 
 
-También puedes usar Postman o cualquier cliente REST para probar la API.
-💡 Puedes usar Postman o cualquier cliente REST para probar los endpoints.
+También puedes usar Postman o cualquier cliente REST para probar la API.💡
 
 ## 📂 Endpoints principales
 
