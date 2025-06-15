@@ -60,6 +60,7 @@ public class TurnoService implements ITurnoService {
     }
 
     // metodo paciente
+    @Override
     public TurnoResponseDto reservarTurno(Long pacienteId, Long turnoId) {
 
         Paciente paciente = pacienteRepository.findById(pacienteId)
@@ -154,6 +155,25 @@ public class TurnoService implements ITurnoService {
     public List<TurnoResponseDto> traerTurnos() {
 
         return turnoMapper.conversionTurnosAResponse(turnoRepo.findAll());
+    }
+
+    @Override
+    public TurnoResponseDto cancelarTurno(Long pacienteId, Long turnoId) {
+        Turno turno = turnoRepo.findById(turnoId).orElseThrow(TurnoNoEncontradoException::new);
+        Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(PacienteNoEncontradoException::new);
+        if(turno.getEstado() == PresenciaEnum.RESERVADO){
+            turno.setEstado(PresenciaEnum.DISPONIBLE);
+        } else {
+            throw new RuntimeException("No se encontró el turno"); //falta excepcion personalizada
+        }
+        if(turno.getPaciente() == paciente){
+            turno.setPaciente(null);
+        }else {
+            throw new RuntimeException("No se encontró el turno"); //falta excepcion personalizada
+        }
+
+        turnoRepo.save(turno);
+        return turnoMapper.conversionTurnoAResponse(turno);
     }
 
     @Override

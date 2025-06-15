@@ -43,4 +43,10 @@ public class TurnoController {
         List<TurnoResponseDto> turnos = turnoService.buscarPorEspecialidadDisponibilidad(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(turnos);
     }
+
+    @PutMapping("/pacientes/{pacienteId}/cancelacion/{turnoId}")
+    public ResponseEntity<?> cancelarTurno(@PathVariable Long pacienteId, @PathVariable Long turnoId){
+        TurnoResponseDto turnoResponse = turnoService.cancelarTurno(pacienteId, turnoId);
+        return ResponseEntity.status(HttpStatus.OK).body(turnoResponse);
+    }
 }
