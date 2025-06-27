@@ -2,18 +2,14 @@ package com.clinica.gestionMedica.service.impl;
 
 import com.clinica.gestionMedica.dto.PrestacionRequestDto;
 import com.clinica.gestionMedica.dto.PrestacionResponseDto;
-import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Prestacion;
-import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
-import com.clinica.gestionMedica.excepciones.medico.MedicoYaExisteException;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoEncontradaException;
 import com.clinica.gestionMedica.excepciones.prestacion.PrestacionYaExisteException;
 import com.clinica.gestionMedica.mapper.PrestacionMapper;
 import com.clinica.gestionMedica.repository.PrestacionRepository;
 import com.clinica.gestionMedica.service.IPrestacionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,13 +24,11 @@ public class PrestacionService implements IPrestacionService {
     @Override
     public PrestacionResponseDto crearPrestacion(PrestacionRequestDto prestacionRequest) {
 
-        Prestacion prestacionExiste = prestacionRepo.findByTipo(prestacionRequest.getTipo());
-        if(prestacionExiste != null){
-            throw new PrestacionYaExisteException("Ya existe una prestición creada con este nombre/tipo");
-        }
-        Prestacion prestacion = prestacionMapper.conversionRequestAPrestacion(prestacionRequest);
+        validarPrestacionExistente(prestacionRequest.getTipoPrestacion());
+
+        Prestacion prestacion = prestacionMapper.toEntity(prestacionRequest);
         prestacionRepo.save(prestacion);
-        return prestacionMapper.conversionPrestacionAResponse(prestacion);
+        return prestacionMapper.toResponse(prestacion);
     }
 
     @Override
@@ -42,24 +36,24 @@ public class PrestacionService implements IPrestacionService {
 
         Prestacion prestacion = prestacionRepo.findById(id)
                 .orElseThrow(PrestacionNoEncontradaException::new);
-        if(prestacionRequest.getTipo() != null) prestacion.setTipo(prestacionRequest.getTipo());
-        if(prestacionRequest.getDescripcion() != null) prestacion.setDescripcion(prestacionRequest.getDescripcion());
-        if(prestacionRequest.getPrecio() != null) prestacion.setPrecio(prestacionRequest.getPrecio());
 
-        return prestacionMapper.conversionPrestacionAResponse(prestacion);
+        actualizarPrestacion(prestacion, prestacionRequest);
+
+        prestacionRepo.save(prestacion);
+        return prestacionMapper.toResponse(prestacion);
     }
 
     @Override
     public PrestacionResponseDto traerPrestacion(Long id) {
         Prestacion prestacion = prestacionRepo.findById(id)
                 .orElseThrow(PrestacionNoEncontradaException::new);
-        return prestacionMapper.conversionPrestacionAResponse(prestacion);
+        return prestacionMapper.toResponse(prestacion);
     }
 
 
     @Override
     public List<PrestacionResponseDto> traerPrestaciones() {
-        return prestacionMapper.conversionPrestacionesAResponse(prestacionRepo.findAll());
+        return prestacionMapper.toResponseList(prestacionRepo.findAll());
     }
 
 
@@ -67,6 +61,25 @@ public class PrestacionService implements IPrestacionService {
     public void eliminarPrestacion(Long id) {
         Prestacion prestacion = prestacionRepo.findById(id)
                 .orElseThrow(PrestacionNoEncontradaException::new);
-        prestacionRepo.deleteById(prestacion.getId());
+        prestacionRepo.delete(prestacion);
     }
+
+    private void validarPrestacionExistente(TipoPrestacion tipoPrestacion){
+        if (prestacionRepo.findByTipoPrestacion(tipoPrestacion) != null) {
+            throw new PrestacionYaExisteException(tipoPrestacion);
+        }
+    }
+
+    private void actualizarPrestacion(Prestacion prestacion, PrestacionRequestDto request) {
+        if (request.getTipoPrestacion() != null) {
+            prestacion.setTipoPrestacion(request.getTipoPrestacion());
+        }
+        if (request.getDescripcion() != null) {
+            prestacion.setDescripcion(request.getDescripcion());
+        }
+        if (request.getPrecio() != null) {
+            prestacion.setPrecio(request.getPrecio());
+        }
+    }
+
 }

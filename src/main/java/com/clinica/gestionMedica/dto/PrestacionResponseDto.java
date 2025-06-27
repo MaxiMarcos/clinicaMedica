@@ -1,6 +1,6 @@
 package com.clinica.gestionMedica.dto;
 
-import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -15,5 +15,5 @@ public class PrestacionResponseDto {
     private Long id;
     private String descripcion;
     private Integer precio;
-    private PrestacionTiposEnum tipo;
+    private TipoPrestacion tipo;
 }

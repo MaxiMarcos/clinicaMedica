@@ -1,6 +1,6 @@
 package com.clinica.gestionMedica.dto;
 
-import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -21,5 +21,5 @@ public class MedicoResponseDto {
     private String dni;
     private String telefono;
     private String email;
-    private PrestacionTiposEnum especializacion;
+    private TipoPrestacion especializacion;
 }

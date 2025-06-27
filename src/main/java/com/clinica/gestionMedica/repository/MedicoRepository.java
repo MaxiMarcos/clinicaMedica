@@ -3,7 +3,7 @@ package com.clinica.gestionMedica.repository;
 import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.enums.MedicoEstadoEnum;
-import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +16,5 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
 
     Medico findByDni(String dni);
 
-    List<Medico> findByEspecializacion(PrestacionTiposEnum especializacion);
+    List<Medico> findByEspecializacion(TipoPrestacion especializacion);
 }

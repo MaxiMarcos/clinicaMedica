@@ -1,7 +1,9 @@
 package com.clinica.gestionMedica.excepciones;
 
+import com.clinica.gestionMedica.excepciones.medico.FiltroInvalidoException;
 import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
 import com.clinica.gestionMedica.excepciones.medico.MedicoYaExisteException;
+import com.clinica.gestionMedica.excepciones.medico.MedicosNoEncontradosException;
 import com.clinica.gestionMedica.excepciones.paciente.PacienteNoEncontradoException;
 import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoCubiertaException;
 import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoEncontradaException;
@@ -41,6 +43,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MedicoYaExisteException.class)
     public ResponseEntity<Object> handleMedicoYaExisteException(MedicoYaExisteException ex, WebRequest request) {
+        return new ResponseEntity<>(buildBody(ex.getMessage(), request), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FiltroInvalidoException.class)
+    public ResponseEntity<Object> handleFiltroInvalidoException(FiltroInvalidoException ex, WebRequest request) {
+        return new ResponseEntity<>(buildBody(ex.getMessage(), request), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MedicosNoEncontradosException.class)
+    public ResponseEntity<Object> handleMedicosNoEncontradosException(MedicosNoEncontradosException ex, WebRequest request) {
         return new ResponseEntity<>(buildBody(ex.getMessage(), request), HttpStatus.BAD_REQUEST);
     }
 

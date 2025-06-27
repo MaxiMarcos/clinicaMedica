@@ -5,6 +5,9 @@ import com.clinica.gestionMedica.dto.MedicoResponseDto;
 import com.clinica.gestionMedica.dto.PacienteResponseDto;
 import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,7 +16,7 @@ import java.util.List;
 @Component
 public class MedicoMapper {
 
-    public Medico convertirRequestAMedico(MedicoRequestDto medicoRequest){
+    public Medico toEntity(MedicoRequestDto medicoRequest){
 
         return Medico.builder()
                 .email(medicoRequest.getEmail())
@@ -28,19 +31,8 @@ public class MedicoMapper {
                 .build();
     }
 
-    public Medico convertirResponseAMedico(MedicoResponseDto medicoResponse){
 
-        return Medico.builder()
-                .email(medicoResponse.getEmail())
-                .dni(medicoResponse.getDni())
-                .apellido(medicoResponse.getApellido())
-                .nombre(medicoResponse.getNombre())
-                .especializacion(medicoResponse.getEspecializacion())
-                .telefono(medicoResponse.getTelefono())
-                .build();
-    }
-
-    public MedicoResponseDto convertirMedicoAResponse(Medico medico){
+    public MedicoResponseDto toResponse(Medico medico){
 
         return MedicoResponseDto.builder()
                 .id(medico.getId())
@@ -53,13 +45,12 @@ public class MedicoMapper {
                 .build();
     }
 
-    public List<MedicoResponseDto> convertirAMedicosResponse(List<Medico> medicos){
+    public List<MedicoResponseDto> toResponseList(List<Medico> medicos){
 
         List<MedicoResponseDto> medicosDto = new ArrayList<>();
         for(Medico m : medicos){
-            medicosDto.add(convertirMedicoAResponse(m));
+            medicosDto.add(toResponse(m));
         }
         return medicosDto;
     }
-
 }

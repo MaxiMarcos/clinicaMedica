@@ -101,7 +101,7 @@ public class TurnoService implements ITurnoService {
             throw new TurnoNoDisponibleException();
         }
 
-        PrestacionTiposEnum tipo = turno.getPrestacion().getTipo();
+        TipoPrestacion tipo = turno.getPrestacion().getTipoPrestacion();
         ObraSocialEnum obra = paciente.getObraSocial();
 
         if (obra == ObraSocialEnum.NINGUNA) {
@@ -109,7 +109,7 @@ public class TurnoService implements ITurnoService {
         }
 
         boolean cubierto =
-                (obra == ObraSocialEnum.IOSFA && (tipo == PrestacionTiposEnum.CONSULTA_GENERAL || tipo == PrestacionTiposEnum.ECOGRAFIA))
+                (obra == ObraSocialEnum.IOSFA && (tipo == TipoPrestacion.CONSULTA_GENERAL || tipo == TipoPrestacion.ECOGRAFIA))
                         || obra == ObraSocialEnum.OSDE;
 
         if (!cubierto) {
@@ -125,18 +125,18 @@ public class TurnoService implements ITurnoService {
 
         boolean cubierto = false;
 
-        if (paciente.getObraSocial() == ObraSocialEnum.IOSFA && (requestDto.getTipo() == PrestacionTiposEnum.CONSULTA_GENERAL ||
-                requestDto.getTipo() == PrestacionTiposEnum.ECOGRAFIA)) {
+        if (paciente.getObraSocial() == ObraSocialEnum.IOSFA && (requestDto.getTipo() == TipoPrestacion.CONSULTA_GENERAL ||
+                requestDto.getTipo() == TipoPrestacion.ECOGRAFIA)) {
             cubierto = true;
         } else if (paciente.getObraSocial() == ObraSocialEnum.OSDE) {
             cubierto = true;
         } else if (paciente.getObraSocial() == ObraSocialEnum.NINGUNA &&
-                requestDto.getTipo() == PrestacionTiposEnum.CONSULTA_GENERAL) {
+                requestDto.getTipo() == TipoPrestacion.CONSULTA_GENERAL) {
             cubierto = true;
         }
 
         if (cubierto) {
-            List<Turno> listaTurnos = turnoRepo.findByPrestacion_TipoAndEstado(requestDto.getTipo(), PresenciaEnum.DISPONIBLE);
+            List<Turno> listaTurnos = turnoRepo.findByPrestacion_TipoPrestacionAndEstado(requestDto.getTipo(), PresenciaEnum.DISPONIBLE);
             return turnoMapper.conversionTurnosAResponse(listaTurnos);
         } else {
             throw new PrestacionNoCubiertaException();

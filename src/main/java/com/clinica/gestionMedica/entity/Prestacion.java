@@ -1,6 +1,6 @@
 package com.clinica.gestionMedica.entity;
 
-import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +17,7 @@ public class Prestacion {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private PrestacionTiposEnum tipo;
+    private TipoPrestacion tipoPrestacion;
 
     private String descripcion;
     private Integer precio;

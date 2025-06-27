@@ -41,7 +41,7 @@ public class PrestacionAdminController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> editarPrestacion(Long id, PrestacionRequestDto prestacionRequest){
+    public ResponseEntity<?> editarPrestacion(@PathVariable Long id, @RequestBody PrestacionRequestDto prestacionRequest){
         PrestacionResponseDto prestacionResponse = prestacionService.editarPrestacion(id, prestacionRequest);
         return ResponseEntity.status(HttpStatus.OK).body("Prestación modificada correctamente " + prestacionResponse);
     }

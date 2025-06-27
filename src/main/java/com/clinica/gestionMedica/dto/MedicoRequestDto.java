@@ -1,6 +1,6 @@
 package com.clinica.gestionMedica.dto;
 
-import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -28,7 +28,7 @@ public class MedicoRequestDto {
     @NotBlank
     private String email;
     @NotNull
-    private PrestacionTiposEnum especializacion;
+    private TipoPrestacion especializacion;
     @NotNull
     private Double sueldo;
 }

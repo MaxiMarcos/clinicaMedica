@@ -1,6 +1,6 @@
 package com.clinica.gestionMedica.entity;
 
-import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 public class Medico extends Persona{
 
     @Enumerated(EnumType.STRING)
-    private PrestacionTiposEnum especializacion;
+    private TipoPrestacion especializacion;
     private Double sueldo;
 
 }

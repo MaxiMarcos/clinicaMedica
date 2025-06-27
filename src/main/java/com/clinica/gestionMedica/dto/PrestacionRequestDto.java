@@ -1,6 +1,6 @@
 package com.clinica.gestionMedica.dto;
 
-import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import lombok.*;
 public class PrestacionRequestDto {
 
     @NotNull
-    private PrestacionTiposEnum tipo;
+    private TipoPrestacion tipoPrestacion;
     @NotBlank
     private String descripcion;
     @NotNull

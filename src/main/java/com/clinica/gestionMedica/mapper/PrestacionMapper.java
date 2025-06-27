@@ -13,38 +13,30 @@ import java.util.List;
 @Component
 public class PrestacionMapper {
 
-    public PrestacionResponseDto conversionPrestacionAResponse(Prestacion prestacion){
+    public PrestacionResponseDto toResponse(Prestacion prestacion){
 
         return PrestacionResponseDto.builder()
-                .tipo(prestacion.getTipo())
+                .tipo(prestacion.getTipoPrestacion())
                 .descripcion(prestacion.getDescripcion())
                 .precio(prestacion.getPrecio())
                 .build();
     }
 
-    public PrestacionResponseDto conversionRequestAResponse(PrestacionRequestDto prestacionRequest){
 
-        return PrestacionResponseDto.builder()
-                .tipo(prestacionRequest.getTipo())
-                .descripcion(prestacionRequest.getDescripcion())
-                .precio(prestacionRequest.getPrecio())
-                .build();
-    }
-
-    public Prestacion conversionRequestAPrestacion(PrestacionRequestDto prestacionRequest){
+    public Prestacion toEntity(PrestacionRequestDto prestacionRequest){
 
         return Prestacion.builder()
-                .tipo(prestacionRequest.getTipo())
+                .tipoPrestacion(prestacionRequest.getTipoPrestacion())
                 .descripcion(prestacionRequest.getDescripcion())
                 .precio(prestacionRequest.getPrecio())
                 .build();
     }
 
-    public List<PrestacionResponseDto> conversionPrestacionesAResponse(List<Prestacion> prestaciones){
+    public List<PrestacionResponseDto> toResponseList(List<Prestacion> prestaciones){
         List<PrestacionResponseDto> prestacionesResponse = new ArrayList<>();
 
         for(Prestacion p : prestaciones){
-            prestacionesResponse.add(conversionPrestacionAResponse(p));
+            prestacionesResponse.add(toResponse(p));
         }
         return prestacionesResponse;
     }

@@ -1,6 +1,6 @@
 package com.clinica.gestionMedica.dto;
 
-import com.clinica.gestionMedica.enums.PrestacionTiposEnum;
+import com.clinica.gestionMedica.enums.TipoPrestacion;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -15,5 +15,5 @@ public class TurnoBusquedaRequestDto {
     private Long pacienteId;
 
     @NotNull(message = "El tipo de prestación es obligatorio")
-    private PrestacionTiposEnum tipo;
+    private TipoPrestacion tipo;
 }
