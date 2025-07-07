@@ -34,6 +34,16 @@ public class MedicoController {
         return ResponseEntity.ok(medicos);
     }
 
+    @GetMapping("/especialidad")
+    public ResponseEntity<List<MedicoResponseDto>> traerMedicosFiltrados(
+            @RequestParam(required = false) Long pacienteId,
+            @RequestParam(required = false) TipoPrestacion especialidad) {
+
+        List<MedicoResponseDto> medicos = medicoService.medicosPorEspecialidad(pacienteId, especialidad);
+
+        return ResponseEntity.ok(medicos);
+    }
+
     @GetMapping
     public ResponseEntity<List<MedicoResponseDto>> traerMedicos(){
         return ResponseEntity.status(HttpStatus.OK).body(medicoService.traerMedicos());

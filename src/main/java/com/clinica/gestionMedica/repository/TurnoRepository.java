@@ -15,6 +15,8 @@ public interface TurnoRepository extends JpaRepository<Turno, Long> {
 
     List<Turno> findByPrestacion_TipoPrestacionAndEstado(TipoPrestacion tipoPrestacion, PresenciaEnum estado);
 
+    List<Turno> findByMedicoId(Long id);
+
     @Query("SELECT MAX(t.codigoTurno) FROM Turno t")
     Optional<Integer> findMaxCodigoTurno();
 }

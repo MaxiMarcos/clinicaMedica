@@ -26,7 +26,6 @@ public class Turno {
     @Enumerated(EnumType.STRING)
     private PresenciaEnum estado = PresenciaEnum.DISPONIBLE;
 
-
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable =  true)
     private Paciente paciente;

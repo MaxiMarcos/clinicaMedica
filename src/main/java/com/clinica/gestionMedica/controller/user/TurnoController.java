@@ -1,13 +1,10 @@
 package com.clinica.gestionMedica.controller.user;
 
 import com.clinica.gestionMedica.dto.TurnoBusquedaRequestDto;
-import com.clinica.gestionMedica.dto.TurnoRequestDto;
 import com.clinica.gestionMedica.dto.TurnoResponseDto;
-import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.service.impl.TurnoService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +36,8 @@ public class TurnoController {
     }
 
     @PostMapping("/filtro")
-    public ResponseEntity<?> traerTurnosPorEspecialidadYDisponibilidad(@RequestBody TurnoBusquedaRequestDto requestDto){
-        List<TurnoResponseDto> turnos = turnoService.buscarPorEspecialidadDisponibilidad(requestDto);
+    public ResponseEntity<?> traerPorMedicos(@RequestBody TurnoBusquedaRequestDto requestDto){
+        List<TurnoResponseDto> turnos = turnoService.buscarPorMedico(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(turnos);
     }
 

@@ -27,7 +27,7 @@ public class TurnoMapper {
         this.prestacionRepository = prestacionRepository;
     }
 
-    public TurnoResponseDto conversionTurnoAResponse(Turno turno){
+    public TurnoResponseDto toResponse(Turno turno){
 
 
         return TurnoResponseDto.builder()
@@ -38,7 +38,7 @@ public class TurnoMapper {
                 .build();
     }
 
-    public Turno conversionResponseATurno(TurnoResponseDto turnoResponseDto){
+    public Turno toEntityFromResponse(TurnoResponseDto turnoResponseDto){
 
 
         return Turno.builder()
@@ -48,7 +48,7 @@ public class TurnoMapper {
                 .build();
     }
 
-    public Turno conversionRequestATurno(TurnoRequestDto turnoRequest, Medico medico, Prestacion prestacion, Paciente paciente){
+    public Turno toEntity(TurnoRequestDto turnoRequest, Medico medico, Prestacion prestacion, Paciente paciente){
 
         return Turno.builder()
                 .estado(turnoRequest.getEstado())
@@ -61,11 +61,11 @@ public class TurnoMapper {
     }
 
 
-    public List<TurnoResponseDto> conversionTurnosAResponse(List<Turno> turnos){
+    public List<TurnoResponseDto> toResponseList(List<Turno> turnos){
 
         List<TurnoResponseDto> turnoResponseDto = new ArrayList<>();
         for(Turno r : turnos){
-            turnoResponseDto.add(conversionTurnoAResponse(r));
+            turnoResponseDto.add(toResponse(r));
         }
         return turnoResponseDto;
     }
@@ -76,7 +76,7 @@ public class TurnoMapper {
 
         List<Turno> turnos= new ArrayList<>();
         for(TurnoResponseDto t : turnosResponse){
-            turnos.add(conversionResponseATurno(t));
+            turnos.add(toEntityFromResponse(t));
         }
         return turnos;
     }

@@ -9,20 +9,20 @@ import com.clinica.gestionMedica.entity.Prestacion;
 import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.enums.*;
 import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
+import com.clinica.gestionMedica.excepciones.medico.MedicosNoEncontradosException;
 import com.clinica.gestionMedica.excepciones.paciente.PacienteNoEncontradoException;
 import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoCubiertaException;
 import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoEncontradaException;
 import com.clinica.gestionMedica.excepciones.turno.ObraSocialRequeridaException;
 import com.clinica.gestionMedica.excepciones.turno.TurnoNoDisponibleException;
 import com.clinica.gestionMedica.excepciones.turno.TurnoNoEncontradoException;
-import com.clinica.gestionMedica.mapper.MedicoMapper;
+import com.clinica.gestionMedica.excepciones.turno.TurnosNoEncontradosException;
 import com.clinica.gestionMedica.mapper.TurnoMapper;
 import com.clinica.gestionMedica.repository.MedicoRepository;
 import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.repository.PrestacionRepository;
 import com.clinica.gestionMedica.repository.TurnoRepository;
 import com.clinica.gestionMedica.service.ITurnoService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -50,13 +50,12 @@ public class TurnoService implements ITurnoService {
         if (turnoRequest.getPacienteId() != null){
             paciente = pacienteRepository.findById(turnoRequest.getPacienteId()).orElseThrow(PacienteNoEncontradoException::new);
         }
-
         Medico medico = medicoRepository.findById(turnoRequest.getMedicoId()).orElseThrow(MedicoNoEncontradoException::new);
         Prestacion prestacion = prestacionRepository.findById(turnoRequest.getPrestacionId()).orElseThrow(PrestacionNoEncontradaException::new);
 
-        Turno turno = turnoMapper.conversionRequestATurno(turnoRequest, medico, prestacion, paciente);
+        Turno turno = turnoMapper.toEntity(turnoRequest, medico, prestacion, paciente);
         turnoRepo.save(turno);
-        return turnoMapper.conversionTurnoAResponse(turno);
+        return turnoMapper.toResponse(turno);
     }
 
     // metodo paciente
@@ -73,11 +72,11 @@ public class TurnoService implements ITurnoService {
 
         turno.setPaciente(paciente);
         turno.setEstado(PresenciaEnum.RESERVADO);
-        TurnoResponseDto turnoResponseDto = turnoMapper.conversionTurnoAResponse(turno);
-
-        this.emailPersonalizado(paciente, turnoResponseDto);
+        TurnoResponseDto turnoResponseDto = turnoMapper.toResponse(turno);
 
         turnoRepo.save(turno);
+        this.emailPersonalizado(paciente, turnoResponseDto);
+
         return turnoResponseDto;
     }
 
@@ -85,15 +84,86 @@ public class TurnoService implements ITurnoService {
     public TurnoResponseDto editarTurno(Long id, TurnoRequestDto turnoRequest) {
         Turno turno = turnoRepo.findById(id)
                 .orElseThrow(TurnoNoEncontradoException::new);
-        if(turnoRequest.getPacienteId() != null) turno.setPaciente(turno.getPaciente());
-        if(turnoRequest.getEstado() != null) turno.setEstado(turno.getEstado());
-        if(turnoRequest.getPrestacionId() != null) turno.setPrestacion(turno.getPrestacion());
-        if(turnoRequest.getFechaConsulta() != null) turno.setFechaConsulta(turno.getFechaConsulta());
-        if(turnoRequest.getMedicoId() != null) turno.setMedico(turno.getMedico());
+
+        actualizarTurno(turnoRequest, turno);
+
         turnoRepo.save(turno);
+        return turnoMapper.toResponse(turno);
 
-        return turnoMapper.conversionTurnoAResponse(turno);
+    }
 
+
+    public List<TurnoResponseDto> buscarPorMedico(TurnoBusquedaRequestDto requestDto){
+
+        Paciente paciente = pacienteRepository.findById(requestDto.getPacienteId())
+                .orElseThrow(PacienteNoEncontradoException::new);
+
+        List<Turno> turnos = turnoRepo.findByMedicoId(requestDto.getMedicoId());
+
+        return turnoMapper.toResponseList(turnos);
+
+/** ESTA LÓGICA DEBE IR EN EL SERVICIO QUE ELGIE UNA PRESTACIÓN Y TRAE MEDICOS:
+ *
+        boolean cubierto = false;
+
+        if (paciente.getObraSocial() == ObraSocialEnum.IOSFA && (requestDto.getTipo() == TipoPrestacion.CONSULTA_GENERAL ||
+                requestDto.getTipo() == TipoPrestacion.ECOGRAFIA)) {
+            cubierto = true;
+        } else if (paciente.getObraSocial() == ObraSocialEnum.OSDE) {
+            cubierto = true;
+        } else if (paciente.getObraSocial() == ObraSocialEnum.NINGUNA &&
+                requestDto.getTipo() == TipoPrestacion.CONSULTA_GENERAL) {
+            cubierto = true;
+        }
+
+        if (cubierto) {
+            List<Turno> listaTurnos = turnoRepo.findByPrestacion_TipoPrestacionAndEstado(requestDto.getTipo(), PresenciaEnum.DISPONIBLE);
+            return turnoMapper.conversionTurnosAResponse(listaTurnos);
+        } else {
+            throw new PrestacionNoCubiertaException();
+        }
+
+        **/
+
+    }
+
+    @Override
+    public TurnoResponseDto traerTurno(Long id) {
+        Turno turno = turnoRepo.findById(id)
+                .orElseThrow(TurnoNoEncontradoException::new);
+        return turnoMapper.toResponse(turno);
+    }
+
+    @Override
+    public List<TurnoResponseDto> traerTurnos() {
+
+        return turnoMapper.toResponseList(turnoRepo.findAll());
+    }
+
+    @Override
+    public TurnoResponseDto cancelarTurno(Long pacienteId, Long turnoId) {
+        Turno turno = turnoRepo.findById(turnoId).orElseThrow(TurnoNoEncontradoException::new);
+        Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(PacienteNoEncontradoException::new);
+        if(turno.getEstado() == PresenciaEnum.RESERVADO){
+            turno.setEstado(PresenciaEnum.DISPONIBLE);
+        } else {
+            throw new RuntimeException("No se encontró el turno"); //falta excepcion personalizada
+        }
+        if(turno.getPaciente() == paciente){
+            turno.setPaciente(null);
+        }else {
+            throw new RuntimeException("No se encontró el turno"); //falta excepcion personalizada
+        }
+
+        turnoRepo.save(turno);
+        return turnoMapper.toResponse(turno);
+    }
+
+    @Override
+    public void eliminarTurno(Long id) {
+        Turno turno = turnoRepo.findById(id)
+                .orElseThrow(TurnoNoEncontradoException::new);
+        turnoRepo.deleteById(turno.getId());
     }
 
     public void validarTurnoParaPaciente(Turno turno, Paciente paciente) {
@@ -117,70 +187,12 @@ public class TurnoService implements ITurnoService {
         }
     }
 
-    public List<TurnoResponseDto> buscarPorEspecialidadDisponibilidad(TurnoBusquedaRequestDto requestDto){
-
-        Paciente paciente = pacienteRepository.findById(requestDto.getPacienteId())
-                .orElseThrow(PacienteNoEncontradoException::new);
-
-
-        boolean cubierto = false;
-
-        if (paciente.getObraSocial() == ObraSocialEnum.IOSFA && (requestDto.getTipo() == TipoPrestacion.CONSULTA_GENERAL ||
-                requestDto.getTipo() == TipoPrestacion.ECOGRAFIA)) {
-            cubierto = true;
-        } else if (paciente.getObraSocial() == ObraSocialEnum.OSDE) {
-            cubierto = true;
-        } else if (paciente.getObraSocial() == ObraSocialEnum.NINGUNA &&
-                requestDto.getTipo() == TipoPrestacion.CONSULTA_GENERAL) {
-            cubierto = true;
-        }
-
-        if (cubierto) {
-            List<Turno> listaTurnos = turnoRepo.findByPrestacion_TipoPrestacionAndEstado(requestDto.getTipo(), PresenciaEnum.DISPONIBLE);
-            return turnoMapper.conversionTurnosAResponse(listaTurnos);
-        } else {
-            throw new PrestacionNoCubiertaException();
-        }
-    }
-
-
-    @Override
-    public TurnoResponseDto traerTurno(Long id) {
-        Turno turno = turnoRepo.findById(id)
-                .orElseThrow(TurnoNoEncontradoException::new);
-        return turnoMapper.conversionTurnoAResponse(turno);
-    }
-
-    @Override
-    public List<TurnoResponseDto> traerTurnos() {
-
-        return turnoMapper.conversionTurnosAResponse(turnoRepo.findAll());
-    }
-
-    @Override
-    public TurnoResponseDto cancelarTurno(Long pacienteId, Long turnoId) {
-        Turno turno = turnoRepo.findById(turnoId).orElseThrow(TurnoNoEncontradoException::new);
-        Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(PacienteNoEncontradoException::new);
-        if(turno.getEstado() == PresenciaEnum.RESERVADO){
-            turno.setEstado(PresenciaEnum.DISPONIBLE);
-        } else {
-            throw new RuntimeException("No se encontró el turno"); //falta excepcion personalizada
-        }
-        if(turno.getPaciente() == paciente){
-            turno.setPaciente(null);
-        }else {
-            throw new RuntimeException("No se encontró el turno"); //falta excepcion personalizada
-        }
-
-        turnoRepo.save(turno);
-        return turnoMapper.conversionTurnoAResponse(turno);
-    }
-
-    @Override
-    public void eliminarTurno(Long id) {
-        Turno turno = turnoRepo.findById(id)
-                .orElseThrow(TurnoNoEncontradoException::new);
-        turnoRepo.deleteById(turno.getId());
+    private void actualizarTurno(TurnoRequestDto turnoRequest, Turno turno){
+        if(turnoRequest.getPacienteId() != null) turno.setPaciente(turno.getPaciente());
+        if(turnoRequest.getEstado() != null) turno.setEstado(turno.getEstado());
+        if(turnoRequest.getPrestacionId() != null) turno.setPrestacion(turno.getPrestacion());
+        if(turnoRequest.getFechaConsulta() != null) turno.setFechaConsulta(turno.getFechaConsulta());
+        if(turnoRequest.getMedicoId() != null) turno.setMedico(turno.getMedico());
     }
 
     private void emailPersonalizado(Paciente paciente, TurnoResponseDto turnoResponseDto){
@@ -216,5 +228,6 @@ Por favor presentate 10 minutos antes.
             throw new RuntimeException("Error al enviar el correo de confirmación: " + e.getMessage());
         }
     }
+
 
 }

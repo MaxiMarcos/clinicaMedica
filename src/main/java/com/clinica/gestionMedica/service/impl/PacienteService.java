@@ -7,7 +7,9 @@ import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
+import com.clinica.gestionMedica.excepciones.medico.MedicoYaExisteException;
 import com.clinica.gestionMedica.excepciones.paciente.PacienteNoEncontradoException;
+import com.clinica.gestionMedica.excepciones.paciente.PacienteYaExisteException;
 import com.clinica.gestionMedica.mapper.PacienteMapper;
 import com.clinica.gestionMedica.mapper.TurnoMapper;
 import com.clinica.gestionMedica.repository.PacienteRepository;
@@ -29,14 +31,12 @@ public class PacienteService implements IPacienteService {
     @Override
     public PacienteResponseDto crearPaciente(PacienteRequestDto pacienteRequest) {
 
-        Paciente pacientePorDni = pacienteRepo.findByDni(pacienteRequest.getDni());
-        if (pacientePorDni != null) {
-            throw new IllegalStateException("Ya existe un paciente creado con este DNI." );
-        }
-        Paciente paciente = pacienteMapper.conversionRequestAPaciente(pacienteRequest);
+        validarPacienteExistente(pacienteRequest.getDni());
+
+        Paciente paciente = pacienteMapper.toEntity(pacienteRequest);
         pacienteRepo.save(paciente);
 
-        return pacienteMapper.conversionPacienteAResponseDto(paciente);
+        return pacienteMapper.toResponse(paciente);
     }
 
 
@@ -46,16 +46,10 @@ public class PacienteService implements IPacienteService {
         Paciente paciente = pacienteRepo.findById(id)
                 .orElseThrow(PacienteNoEncontradoException::new);
 
-        if(pacienteRequest.getApellido() != null) paciente.setApellido(pacienteRequest.getApellido());
-        if(pacienteRequest.getNombre() != null) paciente.setNombre(pacienteRequest.getNombre());
-        if(pacienteRequest.getFecha_nacimiento() != null) paciente.setFecha_nacimiento(pacienteRequest.getFecha_nacimiento());
-        if(pacienteRequest.getDni() != null) paciente.setDni(pacienteRequest.getDni());
-        if(pacienteRequest.getTelefono() != null) paciente.setTelefono(pacienteRequest.getTelefono());
-        if(pacienteRequest.getDireccion() != null) paciente.setDireccion(pacienteRequest.getDireccion());
-        if(pacienteRequest.getEmail() !=null) paciente.setEmail(pacienteRequest.getEmail());
+        actualizarPaciente(pacienteRequest, paciente);
 
         pacienteRepo.save(paciente);
-        return pacienteMapper.conversionPacienteAResponseDto(paciente);
+        return pacienteMapper.toResponse(paciente);
     }
 
     @Override
@@ -63,17 +57,17 @@ public class PacienteService implements IPacienteService {
         Paciente paciente = pacienteRepo.findById(id)
                 .orElseThrow(PacienteNoEncontradoException::new);
 
-        return pacienteMapper.conversionPacienteAResponseDto(paciente);
+        return pacienteMapper.toResponse(paciente);
     }
 
     @Override
     public PacienteResponseDto traerPacientePorDni(String dni) {
-        return pacienteMapper.conversionPacienteAResponseDto(pacienteRepo.findByDni(dni));
+        return pacienteMapper.toResponse(pacienteRepo.findByDni(dni));
     }
 
     @Override
     public List<PacienteResponseDto> traerPacientes() {
-        return pacienteMapper.conversionPacientesAResponse(pacienteRepo.findAll());
+        return pacienteMapper.toResponseList(pacienteRepo.findAll());
     }
 
     @Override
@@ -87,8 +81,27 @@ public class PacienteService implements IPacienteService {
     public List<TurnoResponseDto> traerHistorial(String dni) {
         Paciente paciente = pacienteRepo.findByDni(dni);
         List<Turno> turnos = paciente.getListaTurnos();
-        List<TurnoResponseDto> turnosResponse = turnoMapper.conversionTurnosAResponse(turnos);
+        List<TurnoResponseDto> turnosResponse = turnoMapper.toResponseList(turnos);
         return turnosResponse;
+    }
+
+    private void actualizarPaciente(PacienteRequestDto pacienteRequest, Paciente paciente){
+
+        if(pacienteRequest.getApellido() != null) paciente.setApellido(pacienteRequest.getApellido());
+        if(pacienteRequest.getNombre() != null) paciente.setNombre(pacienteRequest.getNombre());
+        if(pacienteRequest.getFecha_nacimiento() != null) paciente.setFecha_nacimiento(pacienteRequest.getFecha_nacimiento());
+        if(pacienteRequest.getDni() != null) paciente.setDni(pacienteRequest.getDni());
+        if(pacienteRequest.getTelefono() != null) paciente.setTelefono(pacienteRequest.getTelefono());
+        if(pacienteRequest.getDireccion() != null) paciente.setDireccion(pacienteRequest.getDireccion());
+        if(pacienteRequest.getEmail() !=null) paciente.setEmail(pacienteRequest.getEmail());
+    }
+
+    private void validarPacienteExistente(String dni){
+
+        Paciente paciente = pacienteRepo.findByDni(dni);
+        if (paciente != null) {
+            throw new MedicoYaExisteException("Ya existe un paciente creado con este DNI.");
+        }
     }
 
 

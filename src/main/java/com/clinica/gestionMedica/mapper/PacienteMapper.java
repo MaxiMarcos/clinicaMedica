@@ -19,7 +19,7 @@ public class PacienteMapper {
         this.TurnoMapper = TurnoMapper;
     }
 
-    public PacienteResponseDto conversionPacienteAResponseDto(Paciente paciente){
+    public PacienteResponseDto toResponse(Paciente paciente){
 
         return PacienteResponseDto.builder()
                 .dni(paciente.getDni())
@@ -27,13 +27,13 @@ public class PacienteMapper {
                 .nombre(paciente.getNombre())
                 .apellido(paciente.getApellido())
                 .telefono(paciente.getTelefono())
-                .historial(TurnoMapper.conversionTurnosAResponse(
-                        Optional.ofNullable(paciente.getListaTurnos()).orElse(Collections.emptyList())
+                .historial(TurnoMapper.toResponseList(
+                        Optional.ofNullable(paciente.getListaTurnos()).orElse(Collections.emptyList()) // +++
                 ))
                 .build();
     }
 
-    public Paciente conversionRequestAPaciente(PacienteRequestDto pacienteRequest){
+    public Paciente toEntity(PacienteRequestDto pacienteRequest){
 
         return Paciente.builder()
                 .dni(pacienteRequest.getDni())
@@ -49,11 +49,11 @@ public class PacienteMapper {
     }
 
 
-    public List<PacienteResponseDto> conversionPacientesAResponse(List<Paciente> pacientes){
+    public List<PacienteResponseDto> toResponseList(List<Paciente> pacientes){
 
         List<PacienteResponseDto> pacientesDto = new ArrayList<>();
         for(Paciente p : pacientes){
-            pacientesDto.add(conversionPacienteAResponseDto(p));
+            pacientesDto.add(toResponse(p));
         }
         return pacientesDto;
     }
