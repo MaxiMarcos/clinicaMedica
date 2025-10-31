@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,4 +27,7 @@ public class Paciente extends Persona {
     private ObraSocialEnum obraSocial;
     @OneToMany(mappedBy = "paciente")
     private List<Turno> listaTurnos;
+
+    @ManyToMany(mappedBy = "pacientes")
+    private Set<Clinica> clinicas = new HashSet<>();
 }

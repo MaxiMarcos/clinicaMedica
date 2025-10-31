@@ -1,8 +1,6 @@
 package com.clinica.gestionMedica.repository;
 
-import com.clinica.gestionMedica.dto.PrestacionResponseDto;
 import com.clinica.gestionMedica.entity.Prestacion;
-import com.clinica.gestionMedica.enums.PrestacionEstadoEnum;
 import com.clinica.gestionMedica.enums.TipoPrestacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

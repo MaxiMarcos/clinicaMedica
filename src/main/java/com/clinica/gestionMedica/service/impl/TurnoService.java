@@ -43,15 +43,16 @@ public class TurnoService implements ITurnoService {
     @Override
     public TurnoResponseDto crearTurno(TurnoRequestDto turnoRequest) {
 
-        int ultimoCodigo = turnoRepo.findMaxCodigoTurno().orElse(0);
-        turnoRequest.setCodigoTurno(ultimoCodigo + 1);
+        turnoRequest.setCodigoTurno(generarCodigoTurno());
 
-        Paciente paciente = null;
-        if (turnoRequest.getPacienteId() != null){
-            paciente = pacienteRepository.findById(turnoRequest.getPacienteId()).orElseThrow(PacienteNoEncontradoException::new);
+        Paciente paciente;
+        if (turnoRequest.getPacienteId() != null) {
+            paciente = buscarPaciente(turnoRequest.getPacienteId());
+        } else {
+            paciente = null;
         }
-        Medico medico = medicoRepository.findById(turnoRequest.getMedicoId()).orElseThrow(MedicoNoEncontradoException::new);
-        Prestacion prestacion = prestacionRepository.findById(turnoRequest.getPrestacionId()).orElseThrow(PrestacionNoEncontradaException::new);
+        Medico medico = buscarMedico(turnoRequest.getMedicoId());
+        Prestacion prestacion = buscarPrestacion(turnoRequest.getPrestacionId());
 
         Turno turno = turnoMapper.toEntity(turnoRequest, medico, prestacion, paciente);
         turnoRepo.save(turno);
@@ -193,6 +194,24 @@ public class TurnoService implements ITurnoService {
         if(turnoRequest.getPrestacionId() != null) turno.setPrestacion(turno.getPrestacion());
         if(turnoRequest.getFechaConsulta() != null) turno.setFechaConsulta(turno.getFechaConsulta());
         if(turnoRequest.getMedicoId() != null) turno.setMedico(turno.getMedico());
+    }
+
+    public int generarCodigoTurno(){
+
+        return turnoRepo.findMaxCodigoTurno().orElse(0) + 1;
+    }
+
+    public Paciente buscarPaciente(Long pacienteId){
+
+        return pacienteRepository.findById(pacienteId).orElseThrow(PacienteNoEncontradoException::new);
+    }
+
+    private Medico buscarMedico(Long medicoId) {
+        return medicoRepository.findById(medicoId).orElseThrow(MedicoNoEncontradoException::new);
+    }
+
+    private Prestacion buscarPrestacion(Long prestacionId) {
+        return prestacionRepository.findById(prestacionId).orElseThrow(PrestacionNoEncontradaException::new);
     }
 
     private void emailPersonalizado(Paciente paciente, TurnoResponseDto turnoResponseDto){

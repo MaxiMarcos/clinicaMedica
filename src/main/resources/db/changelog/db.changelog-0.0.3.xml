@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="1761856668489-31" author="maxi">
+        <createTable tableName="clinica_paciente">
+            <column name="clinica_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pacientes_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1761856668489-32" author="maxi">
+        <addForeignKeyConstraint baseColumnNames="pacientes_id" baseTableName="clinica_paciente" constraintName="FK_PACIENTE_ID" referencedColumnNames="id" referencedTableName="paciente"/>
+    </changeSet>
+
+    <changeSet id="1761856668489-33" author="maxi">
+        <addForeignKeyConstraint baseColumnNames="clinica_id" baseTableName="clinica_paciente" constraintName="FK_CLINICA_ID" referencedColumnNames="id" referencedTableName="clinica"/>
+    </changeSet>
+
+</databaseChangeLog>
