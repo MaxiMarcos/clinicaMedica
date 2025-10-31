@@ -1,0 +1,28 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="maxi" id="add-clinica-id-to-paciente">
+        <addColumn tableName="paciente">
+            <column name="clinica_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="maxi" id="add-fk-clinica-id-to-paciente">
+        <addForeignKeyConstraint baseColumnNames="clinica_id" baseTableName="paciente" constraintName="FK_PACIENTE_CLINICA" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="clinica" validate="true"/>
+    </changeSet>
+
+    <changeSet author="maxi" id="migrate-clinica-paciente-data">
+        <sql>
+            UPDATE paciente p
+            JOIN clinica_paciente cp ON p.id = cp.paciente_id
+            SET p.clinica_id = cp.clinica_id;
+        </sql>
+    </changeSet>
+
+    <changeSet author="maxi" id="drop-clinica-paciente-table">
+        <dropTable tableName="clinica_paciente"/>
+    </changeSet>
+
+</databaseChangeLog>

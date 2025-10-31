@@ -21,4 +21,9 @@ public class Medico extends Persona{
     private TipoPrestacion especializacion;
     private Double sueldo;
 
+    @ManyToOne
+    @JoinColumn(name = "clinica_id") // Esto especifica la columna de la clave foránea en la tabla 'medico'
+    private Clinica clinica;
+
+
 }

@@ -31,4 +31,6 @@ public class MedicoRequestDto {
     private TipoPrestacion especializacion;
     @NotNull
     private Double sueldo;
+    @NotNull
+    private Long clinica;
 }

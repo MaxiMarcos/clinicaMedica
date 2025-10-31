@@ -4,6 +4,8 @@ import com.clinica.gestionMedica.dto.PacienteRequestDto;
 import com.clinica.gestionMedica.dto.PacienteResponseDto;
 import com.clinica.gestionMedica.dto.TurnoResponseDto;
 import com.clinica.gestionMedica.entity.Medico;
+import com.clinica.gestionMedica.dto.ClinicaResponseDto;
+import com.clinica.gestionMedica.mapper.ClinicaMapper;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.entity.Turno;
 import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
@@ -19,14 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class PacienteService implements IPacienteService {
 
     private final PacienteRepository pacienteRepo;
-    private final PacienteMapper pacienteMapper;
-    private final TurnoMapper turnoMapper;
+private final PacienteMapper pacienteMapper;
+private final TurnoMapper turnoMapper;
+private final ClinicaMapper clinicaMapper;
 
     @Override
     public PacienteResponseDto crearPaciente(PacienteRequestDto pacienteRequest) {
@@ -106,4 +110,10 @@ public class PacienteService implements IPacienteService {
 
 
 
+    @Override
+    public Set<ClinicaResponseDto> obtenerClinicasPorPaciente(Long pacienteId) {
+        Paciente paciente = pacienteRepo.findById(pacienteId)
+                .orElseThrow(PacienteNoEncontradoException::new);
+        return clinicaMapper.toResponseList(paciente.getClinicas());
+    }
 }

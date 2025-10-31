@@ -2,10 +2,12 @@ package com.clinica.gestionMedica.service.impl;
 
 import com.clinica.gestionMedica.dto.MedicoRequestDto;
 import com.clinica.gestionMedica.dto.MedicoResponseDto;
+import com.clinica.gestionMedica.entity.Clinica;
 import com.clinica.gestionMedica.entity.Medico;
 import com.clinica.gestionMedica.entity.Paciente;
 import com.clinica.gestionMedica.enums.ObraSocialEnum;
 import com.clinica.gestionMedica.enums.TipoPrestacion;
+import com.clinica.gestionMedica.excepciones.clinica.ClinicaNoEncontradaException;
 import com.clinica.gestionMedica.excepciones.medico.FiltroInvalidoException;
 import com.clinica.gestionMedica.excepciones.medico.MedicoNoEncontradoException;
 import com.clinica.gestionMedica.excepciones.medico.MedicoYaExisteException;
@@ -13,6 +15,7 @@ import com.clinica.gestionMedica.excepciones.medico.MedicosNoEncontradosExceptio
 import com.clinica.gestionMedica.excepciones.paciente.PacienteNoEncontradoException;
 import com.clinica.gestionMedica.excepciones.prestacion.PrestacionNoCubiertaException;
 import com.clinica.gestionMedica.mapper.MedicoMapper;
+import com.clinica.gestionMedica.repository.ClinicaRepository;
 import com.clinica.gestionMedica.repository.MedicoRepository;
 import com.clinica.gestionMedica.repository.PacienteRepository;
 import com.clinica.gestionMedica.service.IMedicoService;
@@ -31,6 +34,7 @@ public class MedicoService implements IMedicoService {
     private final MedicoRepository medicoRepo;
     private final MedicoMapper medicoMapper;
     private final PacienteRepository pacienteRepository;
+    private final ClinicaRepository clinicaRepository;
 
     @Override
     public MedicoResponseDto crearMedico(MedicoRequestDto medicoRequest) {
@@ -149,6 +153,11 @@ public class MedicoService implements IMedicoService {
         if (medicoRequest.getEmail() != null) medico.setEmail(medicoRequest.getEmail());
         if (medicoRequest.getSueldo() != null) medico.setSueldo(medicoRequest.getSueldo());
         if (medicoRequest.getEspecializacion() != null) medico.setEspecializacion(medicoRequest.getEspecializacion());
+        if (medicoRequest.getClinica() != null) {
+            Clinica clinica = clinicaRepository.findById(medicoRequest.getClinica())
+                    .orElseThrow(() -> new ClinicaNoEncontradaException("Clínica no encontrada con ID: " + medicoRequest.getClinica()));
+            medico.setClinica(clinica);
+        }
     }
 
 }

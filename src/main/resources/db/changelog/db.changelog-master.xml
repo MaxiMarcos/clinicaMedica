@@ -1,0 +1,184 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="maxi" id="1761856668489-1">
+        <createTable tableName="clinica">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="direccion" type="VARCHAR(255)"/>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="telefono" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="maxi" id="1761856668489-3">
+        <createTable tableName="clinica_paciente">
+            <column name="clinica_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="paciente_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-4">
+        <createTable tableName="medico">
+            <column name="especializacion" type="ENUM('CONSULTA_GENERAL', 'CONSULTA_CARDIOLOGIA', 'CONSULTA_DERMATOLOGIA', 'CONSULTA_PEDIATRIA', 'ANALISIS', 'RADIOGRAFIA', 'ECOGRAFIA', 'TERAPIA')"/>
+            <column name="sueldo" type="DOUBLE"/>
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="clinica_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-5">
+        <createTable tableName="paciente">
+            <column name="obra_social" type="ENUM('NINGUNA', 'OSDE', 'IOSFA')"/>
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-6">
+        <createTable tableName="persona">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="apellido" type="VARCHAR(255)"/>
+            <column name="direccion" type="VARCHAR(255)"/>
+            <column name="dni" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="fecha_nacimiento" type="date"/>
+            <column name="nombre" type="VARCHAR(255)"/>
+            <column name="telefono" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-7">
+        <createTable tableName="prestacion">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="descripcion" type="VARCHAR(255)"/>
+            <column name="precio" type="INT"/>
+            <column name="tipo_prestacion" type="ENUM('CONSULTA_GENERAL', 'CONSULTA_CARDIOLOGIA', 'CONSULTA_DERMATOLOGIA', 'CONSULTA_PEDIATRIA', 'ANALISIS', 'RADIOGRAFIA', 'ECOGRAFIA', 'TERAPIA')"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-8">
+        <createTable tableName="token">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="expired" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revoked" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="VARCHAR(255)"/>
+            <column name="token_type" type="ENUM('BEARER')"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-9">
+        <createTable tableName="turno">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="codigo_turno" type="INT">
+                <constraints unique="true"/>
+            </column>
+            <column name="estado" type="ENUM('DISPONIBLE', 'RESERVADO', 'ATENDIDO', 'AUSENTE', 'ANULADO')"/>
+            <column name="fecha_consulta" type="datetime"/>
+            <column name="medico_id" type="BIGINT"/>
+            <column name="paciente_id" type="BIGINT"/>
+            <column name="prestacion_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-10">
+        <createTable tableName="user">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="dni" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="role" type="ENUM('ADMIN', 'CUSTOMER')"/>
+            <column name="paciente_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-11">
+        <createIndex associatedWith="" indexName="FK3x58hivoguwqlcpxugx4dq3vu" tableName="medico">
+            <column name="clinica_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-12">
+        <createIndex associatedWith="" indexName="FK6itx91mjo8y9gfj0l46h78l8h" tableName="turno">
+            <column name="prestacion_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-13">
+        <createIndex associatedWith="" indexName="FK86pwxob0qu77pcqk0qhwc90nu" tableName="turno">
+            <column name="medico_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="maxi" id="1761856668489-15">
+        <createIndex associatedWith="" indexName="FKe32ek7ixanakfqsdaokm4q9y2" tableName="token">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-16">
+        <createIndex associatedWith="" indexName="FKkcapwcq33ynpqiiwofpto1kva" tableName="user">
+            <column name="paciente_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-17">
+        <createIndex associatedWith="" indexName="FKqhwvsf9bqsfmlhd0nurynvwsd" tableName="turno">
+            <column name="paciente_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-18">
+        <createIndex associatedWith="" indexName="FKra7ejmaboc1xpht0oeli1crdj" tableName="clinica_paciente">
+            <column name="paciente_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-19">
+        <addForeignKeyConstraint baseColumnNames="clinica_id" baseTableName="medico" constraintName="FK3x58hivoguwqlcpxugx4dq3vu" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="clinica" validate="true"/>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-20">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="paciente" constraintName="FK4x05t2bhlj6yj9i9qip6c8jj3" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="persona" validate="true"/>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-21">
+        <addForeignKeyConstraint baseColumnNames="prestacion_id" baseTableName="turno" constraintName="FK6itx91mjo8y9gfj0l46h78l8h" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="prestacion" validate="true"/>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-22">
+        <addForeignKeyConstraint baseColumnNames="medico_id" baseTableName="turno" constraintName="FK86pwxob0qu77pcqk0qhwc90nu" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="medico" validate="true"/>
+    </changeSet>
+
+    <changeSet author="maxi" id="1761856668489-24">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="token" constraintName="FKe32ek7ixanakfqsdaokm4q9y2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-25">
+        <addForeignKeyConstraint baseColumnNames="clinica_id" baseTableName="clinica_paciente" constraintName="FKfp1ip84qqgnyr05a2727gletv" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="clinica" validate="true"/>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-26">
+        <addForeignKeyConstraint baseColumnNames="paciente_id" baseTableName="user" constraintName="FKkcapwcq33ynpqiiwofpto1kva" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="paciente" validate="true"/>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-27">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="medico" constraintName="FKomvgdusj5eb7p0favjjxbl7t6" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="persona" validate="true"/>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-28">
+        <addForeignKeyConstraint baseColumnNames="paciente_id" baseTableName="turno" constraintName="FKqhwvsf9bqsfmlhd0nurynvwsd" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="paciente" validate="true"/>
+    </changeSet>
+    <changeSet author="maxi" id="1761856668489-29">
+        <addForeignKeyConstraint baseColumnNames="paciente_id" baseTableName="clinica_paciente" constraintName="FKra7ejmaboc1xpht0oeli1crdj" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="paciente" validate="true"/>
+    </changeSet>
+
+
+    <include file="db.changelog-0.0.2.xml" relativeToChangelogFile="true"/>
+    <include file="db.changelog-0.0.3.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

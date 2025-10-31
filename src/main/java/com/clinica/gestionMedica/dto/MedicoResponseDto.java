@@ -22,4 +22,5 @@ public class MedicoResponseDto {
     private String telefono;
     private String email;
     private TipoPrestacion especializacion;
+    private Long clinica;
 }
